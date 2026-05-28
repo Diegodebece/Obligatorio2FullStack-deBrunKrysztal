@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Series Tracker</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+
+  <!-- ===================================================== -->
+  <!-- APP CONTAINER -->
+  <!-- ===================================================== -->
+
+  <div id="app">
+
+    <!-- ===================================================== -->
+    <!-- LOGIN -->
+    <!-- ===================================================== -->
+
+    <section id="login-page" class="page auth-page">
+
+      <div class="auth-container">
+
+        <div class="auth-info">
+          <h1>Series Tracker</h1>
+          <p>
+            Organizá tus series, marcá favoritas, llevá tu progreso y recibí recomendaciones.
+          </p>
+        </div>
+
+        <div class="auth-card">
+
+          <h2>Iniciar sesión</h2>
+
+          <form id="login-form" class="form">
+
+            <div class="form-group">
+              <label for="login-email">Email</label>
+              <input 
+                type="email" 
+                id="login-email" 
+                name="email" 
+                placeholder="usuario@email.com"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="login-password">Contraseña</label>
+              <input 
+                type="password" 
+                id="login-password" 
+                name="password" 
+                placeholder="Ingresá tu contraseña"
+                required
+              />
+            </div>
+
+            <p id="login-error" class="message error-message"></p>
+
+            <button id="login-submit" type="submit" class="btn btn-primary" disabled>
+              Ingresar
+            </button>
+
+          </form>
+
+          <p class="auth-switch">
+            ¿No tenés cuenta?
+            <button id="go-to-register" class="btn-link" type="button">
+              Registrarme
+            </button>
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- REGISTRO -->
+    <!-- ===================================================== -->
+
+    <section id="register-page" class="page auth-page hidden">
+
+      <div class="auth-container">
+
+        <div class="auth-info">
+          <h1>Crear cuenta</h1>
+          <p>
+            Registrate para comenzar a gestionar tus seguimientos.
+          </p>
+        </div>
+
+        <div class="auth-card">
+
+          <h2>Registro</h2>
+
+          <form id="register-form" class="form">
+
+            <div class="form-group">
+              <label for="register-username">Nombre de usuario</label>
+              <input 
+                type="text" 
+                id="register-username" 
+                name="username" 
+                placeholder="karina123"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="register-email">Email</label>
+              <input 
+                type="email" 
+                id="register-email" 
+                name="email" 
+                placeholder="usuario@email.com"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="register-password">Contraseña</label>
+              <input 
+                type="password" 
+                id="register-password" 
+                name="password" 
+                placeholder="Mínimo 8 caracteres"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="register-repeat-password">Repetir contraseña</label>
+              <input 
+                type="password" 
+                id="register-repeat-password" 
+                name="repeatPassword" 
+                placeholder="Repetí la contraseña"
+                required
+              />
+            </div>
+
+            <p id="register-error" class="message error-message"></p>
+            <p id="register-success" class="message success-message"></p>
+
+            <button id="register-submit" type="submit" class="btn btn-primary" disabled>
+              Registrarme
+            </button>
+
+          </form>
+
+          <p class="auth-switch">
+            ¿Ya tenés cuenta?
+            <button id="go-to-login" class="btn-link" type="button">
+              Iniciar sesión
+            </button>
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- DASHBOARD / APP PRINCIPAL -->
+    <!-- ===================================================== -->
+
+    <section id="dashboard-page" class="page dashboard-page hidden">
+
+      <!-- ================= HEADER ================= -->
+
+      <header class="app-header">
+
+        <div class="brand">
+          <h1>Series Tracker</h1>
+          <p>Dashboard de gestión</p>
+        </div>
+
+        <nav class="main-nav">
+          <a href="#dashboard-summary">Dashboard</a>
+          <a href="#series-section">Series</a>
+          <a href="#categorias-section" class="admin-only">Categorías</a>
+          <a href="#seguimientos-section">Seguimientos</a>
+          <a href="#ia-section">IA</a>
+          <a href="#external-api-section">API externa</a>
+        </nav>
+
+        <div class="header-actions">
+          <span id="header-user-name">Usuario</span>
+          <button id="logout-button" class="btn btn-secondary" type="button">
+            Cerrar sesión
+          </button>
+        </div>
+
+      </header>
+
+      <!-- ================= LAYOUT ================= -->
+
+      <div class="dashboard-layout">
+
+        <!-- ================= SIDEBAR ================= -->
+
+        <aside class="sidebar">
+
+          <div class="user-card">
+
+            <div class="avatar">
+              <span id="user-initials">U</span>
+            </div>
+
+            <h2 id="sidebar-username">Usuario</h2>
+
+            <p id="sidebar-email">usuario@email.com</p>
+
+            <div class="badges">
+              <span id="sidebar-role" class="badge">viewer</span>
+              <span id="sidebar-plan" class="badge badge-plan">plus</span>
+            </div>
+
+          </div>
+
+          <ul class="sidebar-menu">
+            <li><a href="#dashboard-summary">Resumen</a></li>
+            <li><a href="#series-section">Series</a></li>
+            <li><a href="#categorias-section" class="admin-only">Categorías</a></li>
+            <li><a href="#seguimientos-section">Mis seguimientos</a></li>
+            <li><a href="#stats-section">Estadísticas</a></li>
+            <li><a href="#ia-section">Recomendaciones IA</a></li>
+            <li><a href="#external-api-section">API externa</a></li>
+          </ul>
+
+        </aside>
+
+        <!-- ================= MAIN CONTENT ================= -->
+
+        <main class="content">
+
+          <!-- ===================================================== -->
+          <!-- DASHBOARD SUMMARY -->
+          <!-- ===================================================== -->
+
+          <section id="dashboard-summary" class="section">
+
+            <div class="section-header">
+              <div>
+                <h2>Resumen general</h2>
+                <p>Información principal de la cuenta y actividad del usuario.</p>
+              </div>
+            </div>
+
+            <div class="summary-grid">
+
+              <article class="summary-card">
+                <h3>Plan actual</h3>
+                <p id="summary-plan" class="summary-value">plus</p>
+                <button id="upgrade-plan-button" class="btn btn-primary" type="button">
+                  Cambiar a premium
+                </button>
+              </article>
+
+              <article class="summary-card">
+                <h3>Uso del plan</h3>
+                <p id="summary-usage-text" class="summary-value">0 / 4</p>
+
+                <div class="progress">
+                  <div id="summary-usage-progress" class="progress-bar"></div>
+                </div>
+
+                <p id="summary-usage-description" class="small-text">
+                  Usuarios plus pueden tener hasta 4 seguimientos.
+                </p>
+              </article>
+
+              <article class="summary-card">
+                <h3>Series favoritas</h3>
+                <p id="summary-favorites" class="summary-value">0</p>
+              </article>
+
+              <article class="summary-card">
+                <h3>Series terminadas</h3>
+                <p id="summary-finished" class="summary-value">0</p>
+              </article>
+
+            </div>
+
+            <p id="dashboard-message" class="message"></p>
+
+          </section>
+
+          <!-- ===================================================== -->
+          <!-- CRUD SERIES -->
+          <!-- ===================================================== -->
+
+          <section id="series-section" class="section">
+
+            <div class="section-header">
+              <div>
+                <h2>Series</h2>
+                <p>Listado general de series disponibles en la aplicación.</p>
+              </div>
+
+              <span class="admin-only admin-label">
+                Gestión completa solo para administrador
+              </span>
+            </div>
+
+            <!-- FORM SERIE - ADMIN -->
+
+            <div id="serie-form-container" class="panel admin-only">
+
+              <h3 id="serie-form-title">Crear / editar serie</h3>
+
+              <form id="serie-form" class="form form-grid" enctype="multipart/form-data">
+
+                <input type="hidden" id="serie-id" name="id" />
+
+                <div class="form-group">
+                  <label for="serie-titulo">Título</label>
+                  <input 
+                    type="text" 
+                    id="serie-titulo" 
+                    name="titulo" 
+                    placeholder="Título de la serie"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="serie-plataforma">Plataforma</label>
+                  <input 
+                    type="text" 
+                    id="serie-plataforma" 
+                    name="plataforma" 
+                    placeholder="Netflix, HBO, Disney+..."
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="serie-categoria">Categoría</label>
+                  <select id="serie-categoria" name="categoria" required>
+                    <option value="">Seleccionar categoría</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="serie-temporadas">Cantidad de temporadas</label>
+                  <input 
+                    type="number" 
+                    id="serie-temporadas" 
+                    name="cantidadTemporadas" 
+                    min="1"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="serie-episodios">Episodios por temporada</label>
+                  <input 
+                    type="number" 
+                    id="serie-episodios" 
+                    name="episodiosPorTemporada" 
+                    min="1"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="serie-minutos">Minutos por episodio</label>
+                  <input 
+                    type="number" 
+                    id="serie-minutos" 
+                    name="minutosPorEpisodio" 
+                    min="1"
+                    required
+                  />
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="serie-descripcion">Descripción</label>
+                  <textarea 
+                    id="serie-descripcion" 
+                    name="descripcion" 
+                    placeholder="Descripción breve de la serie"
+                  ></textarea>
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="serie-imagen">Imagen</label>
+                  <input 
+                    type="file" 
+                    id="serie-imagen" 
+                    name="imagen" 
+                    accept="image/*"
+                  />
+                </div>
+
+                <div class="form-actions full-width">
+                  <button id="serie-submit" class="btn btn-primary" type="submit">
+                    Guardar serie
+                  </button>
+
+                  <button id="serie-cancel-edit" class="btn btn-secondary" type="button">
+                    Cancelar edición
+                  </button>
+                </div>
+
+                <p id="serie-form-message" class="message full-width"></p>
+
+              </form>
+
+            </div>
+
+            <!-- FILTROS SERIES -->
+
+            <div class="panel">
+
+              <h3>Buscar y filtrar series</h3>
+
+              <div class="filters-grid">
+
+                <div class="form-group">
+                  <label for="series-search">Buscar por título</label>
+                  <input 
+                    type="text" 
+                    id="series-search" 
+                    placeholder="Buscar serie..."
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="series-category-filter">Categoría</label>
+                  <select id="series-category-filter">
+                    <option value="">Todas las categorías</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="series-platform-filter">Plataforma</label>
+                  <input 
+                    type="text" 
+                    id="series-platform-filter" 
+                    placeholder="Netflix, HBO..."
+                  />
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- LISTADO SERIES DESDE BACKEND -->
+
+            <div class="panel">
+
+              <div class="section-header small">
+                <h3>Listado de series</h3>
+                <p id="series-count">0 series encontradas</p>
+              </div>
+
+              <div id="series-loading" class="loading hidden">
+                Cargando series...
+              </div>
+
+              <div id="series-empty" class="empty-state">
+                No hay series para mostrar.
+              </div>
+
+              <div id="series-list" class="cards-grid">
+                <!-- Acá se renderizan las series desde la base de datos -->
+              </div>
+
+              <div id="series-pagination" class="pagination">
+                <button id="series-prev-page" class="btn btn-secondary" type="button">
+                  Anterior
+                </button>
+
+                <span id="series-current-page">Página 1</span>
+
+                <button id="series-next-page" class="btn btn-secondary" type="button">
+                  Siguiente
+                </button>
+              </div>
+
+            </div>
+
+          </section>
+
+          <!-- ===================================================== -->
+          <!-- CRUD CATEGORIAS -->
+          <!-- ===================================================== -->
+
+          <section id="categorias-section" class="section admin-only">
+
+            <div class="section-header">
+              <div>
+                <h2>Categorías</h2>
+                <p>Gestión de categorías disponibles para asignar a las series.</p>
+              </div>
+            </div>
+
+            <div class="panel">
+
+              <h3 id="categoria-form-title">Crear / editar categoría</h3>
+
+              <form id="categoria-form" class="form form-grid">
+
+                <input type="hidden" id="categoria-id" name="id" />
+
+                <div class="form-group">
+                  <label for="categoria-nombre">Nombre</label>
+                  <input 
+                    type="text" 
+                    id="categoria-nombre" 
+                    name="nombre"
+                    placeholder="Drama, Comedia, Suspenso..."
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="categoria-descripcion">Descripción</label>
+                  <input 
+                    type="text" 
+                    id="categoria-descripcion" 
+                    name="descripcion"
+                    placeholder="Descripción de la categoría"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="categoria-activa">Estado</label>
+                  <select id="categoria-activa" name="activa">
+                    <option value="true">Activa</option>
+                    <option value="false">Inactiva</option>
+                  </select>
+                </div>
+
+                <div class="form-actions full-width">
+                  <button id="categoria-submit" class="btn btn-primary" type="submit">
+                    Guardar categoría
+                  </button>
+
+                  <button id="categoria-cancel-edit" class="btn btn-secondary" type="button">
+                    Cancelar edición
+                  </button>
+                </div>
+
+                <p id="categoria-form-message" class="message full-width"></p>
+
+              </form>
+
+            </div>
+
+            <div class="panel">
+
+              <div class="section-header small">
+                <h3>Listado de categorías</h3>
+                <p id="categorias-count">0 categorías</p>
+              </div>
+
+              <div id="categorias-loading" class="loading hidden">
+                Cargando categorías...
+              </div>
+
+              <div id="categorias-empty" class="empty-state">
+                No hay categorías registradas.
+              </div>
+
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+
+                <tbody id="categorias-table-body">
+                  <!-- Acá se renderizan las categorías desde la base de datos -->
+                </tbody>
+              </table>
+
+            </div>
+
+          </section>
+
+          <!-- ===================================================== -->
+          <!-- SEGUIMIENTOS DEL USUARIO -->
+          <!-- ===================================================== -->
+
+          <section id="seguimientos-section" class="section">
+
+            <div class="section-header">
+              <div>
+                <h2>Mis seguimientos</h2>
+                <p>Series agregadas por el usuario a su seguimiento personal.</p>
+              </div>
+            </div>
+
+            <div class="panel">
+
+              <h3 id="seguimiento-form-title">Agregar / editar seguimiento</h3>
+
+              <form id="seguimiento-form" class="form form-grid">
+
+                <input type="hidden" id="seguimiento-id" name="id" />
+
+                <div class="form-group">
+                  <label for="seguimiento-serie">Serie</label>
+                  <select id="seguimiento-serie" name="serie" required>
+                    <option value="">Seleccionar serie</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="seguimiento-estado">Estado</label>
+                  <select id="seguimiento-estado" name="estado" required>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="viendo">Viendo</option>
+                    <option value="terminada">Terminada</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="seguimiento-rating">Rating personal</label>
+                  <input 
+                    type="number" 
+                    id="seguimiento-rating" 
+                    name="ratingPersonal"
+                    min="1"
+                    max="10"
+                    placeholder="1 a 10"
+                  />
+                </div>
+
+                <div class="form-group checkbox-group">
+                  <input 
+                    type="checkbox" 
+                    id="seguimiento-favorita" 
+                    name="esFavorita"
+                  />
+                  <label for="seguimiento-favorita">Marcar como favorita</label>
+                </div>
+
+                <div class="form-actions full-width">
+                  <button id="seguimiento-submit" class="btn btn-primary" type="submit">
+                    Guardar seguimiento
+                  </button>
+
+                  <button id="seguimiento-cancel-edit" class="btn btn-secondary" type="button">
+                    Cancelar edición
+                  </button>
+                </div>
+
+                <p id="seguimiento-form-message" class="message full-width"></p>
+
+              </form>
+
+            </div>
+
+            <div class="panel">
+
+              <h3>Filtros de seguimiento</h3>
+
+              <div class="filters-grid">
+
+                <div class="form-group">
+                  <label for="seguimiento-filter-estado">Estado</label>
+                  <select id="seguimiento-filter-estado">
+                    <option value="">Todos</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="viendo">Viendo</option>
+                    <option value="terminada">Terminada</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="seguimiento-filter-favorita">Favoritas</label>
+                  <select id="seguimiento-filter-favorita">
+                    <option value="">Todas</option>
+                    <option value="true">Solo favoritas</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="seguimiento-search">Buscar</label>
+                  <input 
+                    type="text" 
+                    id="seguimiento-search" 
+                    placeholder="Buscar en mis series..."
+                  />
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="panel">
+
+              <div class="section-header small">
+                <h3>Listado de seguimientos</h3>
+                <p id="seguimientos-count">0 seguimientos</p>
+              </div>
+
+              <div id="seguimientos-loading" class="loading hidden">
+                Cargando seguimientos...
+              </div>
+
+              <div id="seguimientos-empty" class="empty-state">
+                Todavía no agregaste series a tu seguimiento.
+              </div>
+
+              <div id="seguimientos-list" class="cards-grid">
+                <!-- Acá se renderizan los seguimientos desde la base de datos -->
+              </div>
+
+            </div>
+
+          </section>
+
+          <!-- ===================================================== -->
+          <!-- ESTADISTICAS Y GRAFICO -->
+          <!-- ===================================================== -->
+
+          <section id="stats-section" class="section">
+
+            <div class="section-header">
+              <div>
+                <h2>Estadísticas</h2>
+                <p>Métricas actualizadas en la misma interfaz.</p>
+              </div>
+            </div>
+
+            <div class="stats-grid">
+
+              <article class="panel stat-card">
+                <h3>Pendientes</h3>
+                <p id="stat-pendientes" class="summary-value">0</p>
+              </article>
+
+              <article class="panel stat-card">
+                <h3>Viendo</h3>
+                <p id="stat-viendo" class="summary-value">0</p>
+              </article>
+
+              <article class="panel stat-card">
+                <h3>Terminadas</h3>
+                <p id="stat-terminadas" class="summary-value">0</p>
+              </article>
+
+              <article class="panel stat-card">
+                <h3>Promedio rating</h3>
+                <p id="stat-rating-promedio" class="summary-value">-</p>
+              </article>
+
+            </div>
+
+            <div class="panel">
+
+              <h3>Gráfico por estado</h3>
+
+              <div id="chart-container" class="chart-container">
+                <div class="chart-placeholder">
+                  Acá se mostrará el gráfico real con la librería elegida.
+                </div>
+              </div>
+
+            </div>
+
+          </section>
+
+          <!-- ===================================================== -->
+          <!-- INTELIGENCIA ARTIFICIAL -->
+          <!-- ===================================================== -->
+
+          <section id="ia-section" class="section">
+
+            <div class="section-header">
+              <div>
+                <h2>Recomendaciones con IA</h2>
+                <p>Generación de recomendaciones según los gustos del usuario.</p>
+              </div>
+            </div>
+
+            <div class="panel">
+
+              <p>
+                La IA usará tus series favoritas, ratings y estados para generar recomendaciones.
+              </p>
+
+              <button id="generate-ai-recommendations" class="btn btn-primary" type="button">
+                Generar recomendaciones
+              </button>
+
+              <div id="ia-loading" class="loading hidden">
+                Generando respuesta...
+              </div>
+
+              <p id="ia-error" class="message error-message"></p>
+
+              <div id="ia-result" class="result-box">
+                Todavía no se generaron recomendaciones.
+              </div>
+
+            </div>
+
+          </section>
+
+          <!-- ===================================================== -->
+          <!-- API EXTERNA -->
+          <!-- ===================================================== -->
+
+          <section id="external-api-section" class="section">
+
+            <div class="section-header">
+              <div>
+                <h2>API externa</h2>
+                <p>Consulta de información adicional desde un servicio externo.</p>
+              </div>
+            </div>
+
+            <div class="panel">
+
+              <form id="external-search-form" class="form form-inline">
+
+                <div class="form-group">
+                  <label for="external-search-input">Buscar serie externa</label>
+                  <input 
+                    type="text" 
+                    id="external-search-input" 
+                    placeholder="Buscar título..."
+                  />
+                </div>
+
+                <button id="external-search-button" class="btn btn-primary" type="submit">
+                  Buscar
+                </button>
+
+              </form>
+
+              <button id="external-trending-button" class="btn btn-secondary" type="button">
+                Cargar populares
+              </button>
+
+              <div id="external-loading" class="loading hidden">
+                Consultando API externa...
+              </div>
+
+              <p id="external-error" class="message error-message"></p>
+
+              <div id="external-results" class="cards-grid">
+                <!-- Acá se renderizan los datos de la API externa -->
+              </div>
+
+            </div>
+
+          </section>
+
+        </main>
+
+      </div>
+
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- TEMPLATES PARA JS / REACT POSTERIOR -->
+    <!-- ===================================================== -->
+
+    <template id="serie-card-template">
+
+      <article class="card serie-card">
+
+        <img class="card-image serie-image" src="" alt="" />
+
+        <div class="card-body">
+
+          <h3 class="serie-title"></h3>
+
+          <p class="serie-description"></p>
+
+          <ul class="card-data">
+            <li class="serie-platform"></li>
+            <li class="serie-category"></li>
+            <li class="serie-seasons"></li>
+            <li class="serie-duration"></li>
+          </ul>
+
+          <div class="card-actions">
+
+            <button class="btn btn-small add-seguimiento-button" type="button">
+              Agregar a seguimiento
+            </button>
+
+            <button class="btn btn-small edit-serie-button admin-only" type="button">
+              Editar
+            </button>
+
+            <button class="btn btn-small btn-danger delete-serie-button admin-only" type="button">
+              Eliminar
+            </button>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    </template>
+
+    <template id="seguimiento-card-template">
+
+      <article class="card seguimiento-card">
+
+        <img class="card-image seguimiento-image" src="" alt="" />
+
+        <div class="card-body">
+
+          <h3 class="seguimiento-title"></h3>
+
+          <p class="seguimiento-description"></p>
+
+          <ul class="card-data">
+            <li class="seguimiento-platform"></li>
+            <li class="seguimiento-category"></li>
+            <li class="seguimiento-status"></li>
+            <li class="seguimiento-rating"></li>
+            <li class="seguimiento-favorite"></li>
+          </ul>
+
+          <div class="card-actions">
+
+            <button class="btn btn-small edit-seguimiento-button" type="button">
+              Editar
+            </button>
+
+            <button class="btn btn-small btn-danger delete-seguimiento-button" type="button">
+              Eliminar
+            </button>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    </template>
+
+    <template id="categoria-row-template">
+
+      <tr>
+        <td class="categoria-nombre"></td>
+        <td class="categoria-descripcion"></td>
+        <td class="categoria-activa"></td>
+        <td>
+          <button class="btn btn-small edit-categoria-button" type="button">
+            Editar
+          </button>
+
+          <button class="btn btn-small btn-danger delete-categoria-button" type="button">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+
+    </template>
+
+    <template id="external-card-template">
+
+      <article class="card external-card">
+
+        <img class="card-image external-image" src="" alt="" />
+
+        <div class="card-body">
+
+          <h3 class="external-title"></h3>
+
+          <p class="external-description"></p>
+
+          <ul class="card-data">
+            <li class="external-year"></li>
+            <li class="external-rating"></li>
+            <li class="external-genre"></li>
+          </ul>
+
+          <button class="btn btn-small import-external-button" type="button">
+            Usar como referencia
+          </button>
+
+        </div>
+
+      </article>
+
+    </template>
+
+  </div>
+
+  <script src="./app.js"></script>
+
+</body>
+</html>
