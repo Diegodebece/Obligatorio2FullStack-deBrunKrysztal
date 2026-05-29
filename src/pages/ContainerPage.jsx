@@ -1,11 +1,11 @@
-import React from 'react';
-import { Link } from 'react-router';
+
 import { Outlet } from 'react-router'
 
 const ContainerPage = () => {
   return (
     <>
-    <header className="header admin-header">
+    {/*
+      <header className="header admin-header">
         <div>
           <h1>Series Tracker</h1>
           <p>Panel de administración - Admin</p>
@@ -21,6 +21,9 @@ const ContainerPage = () => {
         <button>Cerrar sesión</button>
       </header>
 
+    */ }
+
+    
     <Outlet />
 
     </>

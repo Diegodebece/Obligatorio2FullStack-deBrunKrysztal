@@ -9,20 +9,19 @@ import ViewerStats from '../components/viewer/ViewerStats'
 const ViewerPage = () => {
     return (
         <main className="layout">
-
             <ViewerAside />
-
-            <ViewerSummary />
-
+        <section className="content">
+<ViewerSummary />
             <ViewerCatalog />
-
             <ViewerTracking />
-
             <ViewerStats />
-
             <ViewerAI />
+        
 
-        </main>
+        </section>
+            </main>
+
+
     )
 }
 
