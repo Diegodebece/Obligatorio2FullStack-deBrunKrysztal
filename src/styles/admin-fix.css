@@ -1,0 +1,408 @@
+/* ==========================================
+   ADMIN - Correcciones y mejoras
+   Soluciona: imágenes, formularios, visibilidad
+   ========================================== */
+
+/* ==========================================
+   TARJETAS DE SERIES/CATEGORÍAS
+   ========================================== */
+
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.tarjeta {
+  background: var(--bg-primary);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-base);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.tarjeta:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+
+/* Contenedor de imagen mejorado */
+.tarjeta .imagen {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background-color: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.tarjeta .imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-base);
+}
+
+.tarjeta:hover .imagen img {
+  transform: scale(1.05);
+}
+
+.tarjeta .imagen:has(img) {
+  background-color: var(--bg-primary);
+}
+
+/* Cuando no hay imagen */
+.tarjeta .imagen:not(:has(img)) {
+  color: var(--gray-400);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Contenido de tarjeta */
+.tarjeta > div:last-child {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.tarjeta h3 {
+  color: var(--primary);
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  word-break: break-word;
+}
+
+.tarjeta p {
+  color: var(--gray-600);
+  font-size: 0.9rem;
+  margin: 0.4rem 0;
+  line-height: 1.4;
+}
+
+.tarjeta button {
+  margin-top: 0.75rem;
+  margin-right: 0.5rem;
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+}
+
+.tarjeta button:first-of-type {
+  margin-top: 1rem;
+}
+
+/* ==========================================
+   FORMULARIOS ADMIN
+   ========================================== */
+
+.admin-form {
+  background: var(--bg-primary);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  margin-bottom: 2rem;
+  scroll-margin-top: 180px;
+  scroll-behavior: smooth;
+}
+
+.admin-form h3 {
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-form h3::before {
+  content: '';
+  width: 4px;
+  height: 1.5rem;
+  background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+  border-radius: 2px;
+}
+
+/* Grid para formulario */
+.admin-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.admin-form label {
+  grid-column: span 1;
+  color: var(--gray-700);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+  grid-column: span 1;
+}
+
+.admin-form textarea {
+  grid-column: 1 / -1;
+  min-height: 120px;
+}
+
+.admin-form input[type="file"] {
+  grid-column: 1 / -1;
+  padding: 0.75rem;
+}
+
+.admin-form button {
+  grid-column: 1;
+  margin-top: 1rem;
+}
+
+.admin-form button.cancel-btn {
+  background-color: var(--gray-300);
+  color: var(--gray-900);
+  margin-left: 0.5rem;
+}
+
+.admin-form button.cancel-btn:hover {
+  background-color: var(--gray-400);
+}
+
+/* Secciones del formulario */
+.form-section {
+  grid-column: 1 / -1;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.form-section h4 {
+  color: var(--primary);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+  grid-column: 1 / -1;
+}
+
+/* ==========================================
+   TABLAS ADMIN
+   ========================================== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: var(--bg-primary);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+thead {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.85rem;
+}
+
+td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+tbody tr {
+  transition: all var(--transition-fast);
+}
+
+tbody tr:hover {
+  background-color: var(--bg-tertiary);
+}
+
+/* Botones en tabla */
+td button {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  margin-right: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+td select {
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  margin-right: 0.5rem;
+}
+
+/* ==========================================
+   PANELES ADMIN
+   ========================================== */
+
+.panel {
+  background: var(--bg-primary);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  margin-bottom: 2rem;
+}
+
+.panel h2 {
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+}
+
+.panel h2::before {
+  content: '';
+  width: 4px;
+  height: 1.875rem;
+  background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+  border-radius: 2px;
+}
+
+.panel h3 {
+  color: var(--gray-700);
+  margin: 1.5rem 0 1rem;
+  font-size: 1.1rem;
+}
+
+/* ==========================================
+   HEADER ADMIN STICKY
+   ========================================== */
+
+.admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* ==========================================
+   CONTENT AREA
+   ========================================== */
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  overflow-y: auto;
+}
+
+/* Scroll smooth para content area */
+.content {
+  scroll-behavior: smooth;
+}
+
+/* ==========================================
+   RESPONSIVO
+   ========================================== */
+
+@media (max-width: 1200px) {
+  .tarjetas {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  .admin-form {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-form textarea {
+    grid-column: 1;
+  }
+
+  .admin-form button {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 1024px) {
+  .tarjetas {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .tarjeta .imagen {
+    height: 180px;
+  }
+
+  .admin-form {
+    grid-template-columns: 1fr;
+    padding: 1.25rem;
+  }
+
+  .tarjeta > div:last-child {
+    padding: 1rem;
+  }
+
+  .panel {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .tarjetas {
+    grid-template-columns: 1fr;
+  }
+
+  .tarjeta .imagen {
+    height: 200px;
+  }
+
+  .admin-form {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .admin-form label {
+    margin-bottom: 0.4rem;
+  }
+
+  .admin-form button {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .admin-form button.cancel-btn {
+    margin-top: 0.5rem;
+    margin-left: 0;
+  }
+
+  table {
+    font-size: 0.85rem;
+  }
+
+  th,
+  td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  td button {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.75rem;
+    margin-right: 0.25rem;
+  }
+}

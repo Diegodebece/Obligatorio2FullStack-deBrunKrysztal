@@ -1,4 +1,8 @@
-const AdminUsersTable = () => {
+import { useSelector } from "react-redux";
+
+const AdminUsersTable = ({ onCambiarRolUsuario }) => {
+  const usuarios = useSelector((state) => state.usuarios.usuarios);
+
   return (
     <table>
       <thead>
@@ -13,21 +17,31 @@ const AdminUsersTable = () => {
       </thead>
 
       <tbody>
-        <tr>
-          <td>usernameUsuario</td>
-          <td>emailUsuario</td>
-          <td>viewer</td>
-          <td>plus</td>
-          <td>
-            <select>
-              <option value="viewer">viewer</option>
-              <option value="admin">admin</option>
-            </select>
-          </td>
-          <td>
-            <button type="button">Cambiar rol</button>
-          </td>
-        </tr>
+        {usuarios.map((usuario) => (
+          <tr key={usuario._id}>
+            <td>{usuario.username}</td>
+            <td>{usuario.email}</td>
+            <td>{usuario.rol}</td>
+            <td>{usuario.plan}</td>
+            <td>
+              <select id={`rol-${usuario._id}`} defaultValue={usuario.rol}>
+                <option value="viewer">viewer</option>
+                <option value="admin">admin</option>
+              </select>
+            </td>
+            <td>
+              <button
+                type="button"
+                onClick={() => {
+                  const select = document.getElementById(`rol-${usuario._id}`);
+                  onCambiarRolUsuario(usuario._id, select.value);
+                }}
+              >
+                Cambiar rol
+              </button>
+            </td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );
