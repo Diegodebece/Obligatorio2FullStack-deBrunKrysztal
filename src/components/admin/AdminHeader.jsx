@@ -1,3 +1,5 @@
+import LogoutButton from "../logout/LogoutButton";
+
 const AdminHeader = () => {
   return (
     <header className="header admin-header">
@@ -13,7 +15,7 @@ const AdminHeader = () => {
         <a href="#admin-estadisticas">Estadísticas</a>
       </nav>
 
-      <button type="button">Cerrar sesión</button>
+      <LogoutButton />
     </header>
   );
 };

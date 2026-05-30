@@ -18,7 +18,7 @@ const LoginForm = () => {
     mode: "onChange",
   });
 
-  const procesarForm = async (data) => {
+ const procesarForm = async (data) => {
     try {
       const response = await api.post("/auth/login", data);
       const token = response.data.token;
