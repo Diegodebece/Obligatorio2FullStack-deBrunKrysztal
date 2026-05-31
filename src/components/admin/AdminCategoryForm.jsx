@@ -1,12 +1,21 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import { crearCategoriaSchema } from "../../validators/categorias.validators.js";
 
 const AdminCategoryForm = ({
   onGuardarCategoria,
   categoriaEditando,
   onCancelarEdicion,
 }) => {
-  const { register, handleSubmit, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting, isDirty, isValid }, } = useForm({
+      resolver: joiResolver(crearCategoriaSchema),
+      mode: "onChange",
+    });
 
   useEffect(() => {
     if (categoriaEditando) {
@@ -28,7 +37,7 @@ const AdminCategoryForm = ({
     const datosCategoria = {
       nombre: data.nombre,
       descripcion: data.descripcion,
-      activa: data.activa === "true",
+      activa: data.activa === true || data.activa === "true",
     };
 
     onGuardarCategoria(datosCategoria);
@@ -45,6 +54,10 @@ const AdminCategoryForm = ({
         {...register("nombre")}
       />
 
+      {errors.nombre && (
+        <span className="error">{errors.nombre.message}</span>
+      )}
+
       <label htmlFor="categoria-descripcion">Descripción</label>
       <input
         id="categoria-descripcion"
@@ -53,13 +66,22 @@ const AdminCategoryForm = ({
         {...register("descripcion")}
       />
 
+      {errors.descripcion && (
+        <span className="error">{errors.descripcion.message}</span>
+      )}
+
       <label htmlFor="categoria-activa">Estado</label>
       <select id="categoria-activa" {...register("activa")}>
         <option value="true">activa</option>
         <option value="false">inactiva</option>
       </select>
 
-      <button type="submit">
+      {errors.activa && (
+        <span className="error">{errors.activa.message}</span>
+      )}
+      
+
+      <button type="submit" disabled={isSubmitting || !isDirty || !isValid}>
         {categoriaEditando ? "Modificar categoría" : "Guardar categoría"}
       </button>
 
