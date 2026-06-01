@@ -1,52 +1,55 @@
-import React from 'react'
+import ViewerSerieCard from "./ViewerSerieCard";
+import { useSelector } from "react-redux";
 
 const ViewerCatalog = () => {
+  const series = useSelector((state) => state.series.series);
+  const categorias = useSelector((state) => state.categorias.categorias);
+
+  const obtenerNombreCategoria = (categoriaSerie) => {
+    const idCategoria = categoriaSerie?._id || categoriaSerie;
+
+    const categoriaEncontrada = categorias.find(
+      (categoria) => categoria._id === idCategoria
+    );
+
+    return categoriaEncontrada?.nombre || "Sin categoría";
+  };
+
+  const onAgregarSeguimiento = (serie) => {
+    console.log("Agregar a seguimiento", serie);
+  };
+
+
   return (
     <section className="panel" id="catalogo">
-            <h2>Catálogo de series</h2>
+      <h2>Catálogo de series</h2>
 
-            <div className="filtros">
-              <input type="text" placeholder="buscarPorTitulo" />
+      <div className="filtros">
+        <input type="text" placeholder="buscarPorTitulo" />
 
-              <select>
-                <option>categoriaSerie</option>
-              </select>
+        <select>
+          <option>categoriaSerie</option>
+        </select>
 
-              <input type="text" placeholder="plataformaSerie" />
+        <input type="text" placeholder="plataformaSerie" />
 
-              <button>Filtrar</button>
-            </div>
+        <button>Filtrar</button>
+      </div>
 
-            <div className="tarjetas">
-              <article className="tarjeta">
-                <div className="imagen">imagenSerie</div>
+      <div className="tarjetas">
+        {series.length === 0 && <p>No hay series disponibles.</p>}
 
-                <div>
-                  <h3>nombreSerie</h3>
-                  <p>descripcionSerie</p>
-                  <p>plataformaSerie</p>
-                  <p>categoriaSerie</p>
-                  <p>cantidadTemporadas temporadas</p>
+        {series.map((serie) => (
+          <ViewerSerieCard
+            key={serie._id}
+            serie={serie}
+            nombreCategoria={obtenerNombreCategoria(serie.categoria)}
+            onAgregarSeguimiento={onAgregarSeguimiento}
+          />
+        ))}
+      </div>
 
-                  <button>Agregar a seguimiento</button>
-                </div>
-              </article>
-
-              <article className="tarjeta">
-                <div className="imagen">imagenSerie</div>
-
-                <div>
-                  <h3>nombreSerie</h3>
-                  <p>descripcionSerie</p>
-                  <p>plataformaSerie</p>
-                  <p>categoriaSerie</p>
-                  <p>cantidadTemporadas temporadas</p>
-
-                  <button>Agregar a seguimiento</button>
-                </div>
-              </article>
-            </div>
-          </section>
+    </section>
   )
 }
 

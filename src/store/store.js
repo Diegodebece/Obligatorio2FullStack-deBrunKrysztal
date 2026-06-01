@@ -4,6 +4,7 @@ import categoriasReducer from "../features/categorias/categorias.slice";
 import seriesReducer from "../features/series/series.slice";
 import usuariosReducer from "../features/usuarios/usuarios.slice";
 import estadisticasReducer from "../features/estadisticas/estadisticas.slice";
+import seguimientosReducer from "../features/seguimientos/seguimientos.slice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     series: seriesReducer,
     usuarios: usuariosReducer,
     estadisticas: estadisticasReducer,
+    seguimientos: seguimientosReducer,
   },
 });
    
