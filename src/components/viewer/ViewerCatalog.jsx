@@ -1,7 +1,12 @@
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+
+import api from "../../api/api";
+import { crearSeguimiento } from "../../features/seguimientos/seguimientos.slice";
 import ViewerSerieCard from "./ViewerSerieCard";
-import { useSelector } from "react-redux";
 
 const ViewerCatalog = () => {
+  const dispatch = useDispatch();
   const series = useSelector((state) => state.series.series);
   const categorias = useSelector((state) => state.categorias.categorias);
 
@@ -15,8 +20,38 @@ const ViewerCatalog = () => {
     return categoriaEncontrada?.nombre || "Sin categoría";
   };
 
-  const onAgregarSeguimiento = (serie) => {
-    console.log("Agregar a seguimiento", serie);
+  const onAgregarSeguimiento = async (serie) => {
+    try {
+    const token = localStorage.getItem("token");
+
+    const response = await api.post(
+      "/seguimientos",
+      {
+        serie: serie._id,
+        estado: "pendiente",
+        esFavorita: false,
+        ratingPersonal: null,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    dispatch(
+      crearSeguimiento({
+        ...response.data,
+        serie,
+      })
+    );
+
+    toast.success("Serie agregada a seguimiento");
+  } catch (error) {
+    toast.error(
+      error.response?.data?.message || "Error al agregar seguimiento"
+    );
+  }
   };
 
 

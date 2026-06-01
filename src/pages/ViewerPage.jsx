@@ -5,7 +5,7 @@ import ViewerTracking from '../components/viewer/ViewerTracking'
 import ViewerAI from '../components/viewer/ViewerAI'
 import ViewerCatalog from '../components/viewer/ViewerCatalog'
 import ViewerStats from '../components/viewer/ViewerStats'
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -29,14 +29,14 @@ const ViewerPage = () => {
                     api.get("/categorias", {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
-                    api.get("/seguimientos", {
+                    api.get("/seguimientos/me", {
                         headers: { Authorization: `Bearer ${token}` },
                     }),
                 ]);
 
                 dispatch(listarSeries(seriesRes.data.data));
                 dispatch(listarCategorias(categoriasRes.data.data));
-                dispatch(listarSeguimientos(seguimientosRes.data.data));
+                dispatch(listarSeguimientos(seguimientosRes.data));
             } catch (error) {
                 toast.error(error.response?.data?.message || "Error al cargar los datos del viewer");
             }
