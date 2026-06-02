@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -16,6 +16,7 @@ import AdminSerieForm from "./AdminSerieForm";
 const AdminSeriesManagement = () => {
   const dispatch = useDispatch();
   const [serieEditando, setSerieEditando] = useState(null);
+  const formularioRef = useRef(null);
 
   const cargarSeries = async () => {
     try {
@@ -87,19 +88,35 @@ const AdminSeriesManagement = () => {
     }
   };
 
+  const editarSerie = (serie) => {
+    setSerieEditando(serie);
+
+    requestAnimationFrame(() => {
+      const posicionFormulario =
+        formularioRef.current?.getBoundingClientRect().top + window.scrollY;
+
+      window.scrollTo({
+        top: posicionFormulario - 190,
+        behavior: "smooth",
+      });
+    });
+  };
+
   return (
     <section className="panel" id="admin-series">
       <h2>CRUD de series</h2>
 
-      <AdminSerieForm
-        onGuardarSerie={guardarSerie}
-        serieEditando={serieEditando}
-        onCancelarEdicion={() => setSerieEditando(null)}
-      />
+      <div ref={formularioRef}>
+        <AdminSerieForm
+          onGuardarSerie={guardarSerie}
+          serieEditando={serieEditando}
+          onCancelarEdicion={() => setSerieEditando(null)}
+        />
+      </div>
 
       <div className="tarjetas">
         <AdminSerieCard
-          onEditarSerie={setSerieEditando}
+          onEditarSerie={editarSerie}
           onEliminarSerie={borrarSerie}
         />
       </div>

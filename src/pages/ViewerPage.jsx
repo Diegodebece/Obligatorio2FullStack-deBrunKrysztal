@@ -22,21 +22,33 @@ const ViewerPage = () => {
         const cargarDatosViewer = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const [seriesRes, categoriasRes, seguimientosRes] = await Promise.all([
+                const [seriesRes, categoriasRes] = await Promise.all([
                     api.get("/series", {
                         headers: { Authorization: `Bearer ${token}` },
+                        params: { page: 1, limit: 50 },
                     }),
                     api.get("/categorias", {
                         headers: { Authorization: `Bearer ${token}` },
-                    }),
-                    api.get("/seguimientos/me", {
-                        headers: { Authorization: `Bearer ${token}` },
+                        params: { page: 1, limit: 50 },
                     }),
                 ]);
 
                 dispatch(listarSeries(seriesRes.data.data));
                 dispatch(listarCategorias(categoriasRes.data.data));
-                dispatch(listarSeguimientos(seguimientosRes.data));
+
+                try {
+                    const seguimientosRes = await api.get("/seguimientos/me", {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+
+                    dispatch(listarSeguimientos(seguimientosRes.data.data));
+                } catch (error) {
+                    if (error.response?.status === 404) {
+                        dispatch(listarSeguimientos([]));
+                    } else {
+                        throw error;
+                    }
+                }
             } catch (error) {
                 toast.error(error.response?.data?.message || "Error al cargar los datos del viewer");
             }

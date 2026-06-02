@@ -19,9 +19,13 @@ const AdminTrackingStats = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        params: {
+          page: 1,
+          limit: 50,
+        },
       });
 
-      dispatch(listarSeguimientosEstadisticas(response.data));
+      dispatch(listarSeguimientosEstadisticas(response.data.data));
     } catch (error) {
       toast.error("Error al cargar estadísticas");
     }

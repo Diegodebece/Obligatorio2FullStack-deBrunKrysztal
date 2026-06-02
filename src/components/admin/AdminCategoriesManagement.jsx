@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -16,6 +16,7 @@ import AdminCategoryTable from "./AdminCategoryTable";
 const AdminCategoriesManagement = () => {
   const dispatch = useDispatch();
   const [categoriaEditando, setCategoriaEditando] = useState(null);
+  const formularioRef = useRef(null);
 
   const cargarCategorias = async () => {
     try {
@@ -24,6 +25,10 @@ const AdminCategoriesManagement = () => {
       const response = await api.get("/categorias", {
         headers: {
           Authorization: `Bearer ${token}`,
+        },
+        params: {
+          page: 1,
+          limit: 50,
         },
       });
 
@@ -87,18 +92,34 @@ const AdminCategoriesManagement = () => {
     }
   };
 
+  const editarCategoria = (categoria) => {
+    setCategoriaEditando(categoria);
+
+    requestAnimationFrame(() => {
+      const posicionFormulario =
+        formularioRef.current?.getBoundingClientRect().top + window.scrollY;
+
+      window.scrollTo({
+        top: posicionFormulario - 190,
+        behavior: "smooth",
+      });
+    });
+  };
+
   return (
     <section className="panel" id="admin-categorias">
       <h2>CRUD de categorías</h2>
 
-      <AdminCategoryForm
-        onGuardarCategoria={guardarCategoria}
-        categoriaEditando={categoriaEditando}
-        onCancelarEdicion={() => setCategoriaEditando(null)}
-      />
+      <div ref={formularioRef}>
+        <AdminCategoryForm
+          onGuardarCategoria={guardarCategoria}
+          categoriaEditando={categoriaEditando}
+          onCancelarEdicion={() => setCategoriaEditando(null)}
+        />
+      </div>
 
       <AdminCategoryTable
-        onEditarCategoria={setCategoriaEditando}
+        onEditarCategoria={editarCategoria}
         onEliminarCategoria={borrarCategoria}
       />
     </section>
