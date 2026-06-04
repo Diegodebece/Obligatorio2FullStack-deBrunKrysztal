@@ -1,4 +1,4 @@
-const ViewerSerieCard = ({ serie, nombreCategoria, onAgregarSeguimiento }) => {
+const ViewerSerieCard = ({ serie, nombreCategoria, onAgregarSeguimiento, estaEnSeguimientos, }) => {
   return (
     <article className="tarjeta">
       <div className="imagen">
@@ -16,8 +16,12 @@ const ViewerSerieCard = ({ serie, nombreCategoria, onAgregarSeguimiento }) => {
         <p>{nombreCategoria}</p>
         <p>{serie.cantidadTemporadas} temporadas</p>
 
-        <button type="button" onClick={() => onAgregarSeguimiento(serie)}>
-          Agregar a seguimiento
+        <button
+          type="button"
+          disabled={estaEnSeguimientos}
+          onClick={() => onAgregarSeguimiento(serie)}
+        >
+          {estaEnSeguimientos ? "Ya está en seguimiento" : "Agregar a seguimiento"}
         </button>
       </div>
     </article>

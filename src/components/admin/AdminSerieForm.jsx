@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { crearSerieSchema } from "../../validators/series.validators.js";
+import ImageUploadInput from "../common/ImageUploadInput";
 
 const AdminSerieForm = ({
   onGuardarSerie,
@@ -151,17 +152,14 @@ const AdminSerieForm = ({
         <span className="error">{errors.minutosPorEpisodio.message}</span>
       )}
 
-      <label htmlFor="serie-imagen">Imagen</label>
-      <input
+      <ImageUploadInput
         id="serie-imagen"
-        type="file"
-        accept="image/*"
-        {...register("imagen")}
+        label="Imagen"
+        register={register}
+        error={errors.imagen}
       />
 
-        {errors.imagen && (
-          <span className="error">{errors.imagen.message}</span>
-        )}
+        
 
       <button type="submit" disabled={isSubmitting || !isDirty || !isValid}>
         {serieEditando ? "Modificar serie" : "Guardar serie"}

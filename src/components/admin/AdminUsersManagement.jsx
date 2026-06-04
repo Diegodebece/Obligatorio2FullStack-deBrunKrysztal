@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -7,12 +7,17 @@ import {
   listarUsuarios,
   modificarUsuario,
 } from "../../features/usuarios/usuarios.slice";
+import PaginationControls from "../common/PaginationControls";
 
 
 import AdminUsersTable from "./AdminUsersTable";
 
 const AdminUsersManagement = () => {
   const dispatch = useDispatch();
+
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [paginacion, setPaginacion] = useState(null);
+
 
   const cargarUsuarios = async () => {
     try {
@@ -22,9 +27,14 @@ const AdminUsersManagement = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        params: {
+          page: paginaActual,
+          limit: 10,
+        },
       });
 
       dispatch(listarUsuarios(response.data.data));
+      setPaginacion(response.data.pagination);
     } catch (error) {
       toast.error("Error al cargar usuarios");
     }
@@ -32,7 +42,7 @@ const AdminUsersManagement = () => {
 
   useEffect(() => {
     cargarUsuarios();
-  }, []);
+  }, [paginaActual]);
 
   const cambiarRolUsuario = async (id, nuevoRol) => {
     try {
@@ -60,6 +70,11 @@ const AdminUsersManagement = () => {
       <h2>Gestión de usuarios</h2>
 
       <AdminUsersTable onCambiarRolUsuario={cambiarRolUsuario} />
+      <PaginationControls
+        paginacion={paginacion}
+        paginaActual={paginaActual}
+        onCambiarPagina={setPaginaActual}
+      />
     </section>
   );
 };
