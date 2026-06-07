@@ -1,34 +1,76 @@
-import React from 'react'
+import { useSelector, useDispatch } from "react-redux";
+import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
+
+import api from "../../api/api";
+import { guardarToken } from "../../features/auth/auth.slice";
 
 const ViewerSummary = () => {
-    return (
+  const dispatch = useDispatch();
 
-            <section className="cards-resumen">
-                <article className="resumen-card">
-                    <h3>Plan actual</h3>
-                    <p>plus</p>
-                    <button>Cambiar a premium</button>
-                </article>
+  const token = useSelector((state) => state.auth.token);
+  
+  const seguimientos = useSelector((state) => state.seguimientos.seguimientos);
 
-                <article className="resumen-card">
-                    <h3>Uso del plan</h3>
-                    <p>cantidadSeguimientos / 4</p>
-                    <div className="barra">
-                        <div className="barra-progreso"></div>
-                    </div>
-                </article>
+  const usuario = jwtDecode(token);
+  const planActual = usuario.plan;
 
-                <article className="resumen-card">
-                    <h3>Favoritas</h3>
-                    <p>cantidadFavoritas</p>
-                </article>
+  const totalSeguimientos = seguimientos.length;
 
-                <article className="resumen-card">
-                    <h3>Terminadas</h3>
-                    <p>cantidadTerminadas</p>
-                </article>
-            </section>
-    )
-}
+  const totalFavoritas = seguimientos.filter((seguimiento) => seguimiento.esFavorita).length;
+  const totalTerminadas = seguimientos.filter((seguimiento) => seguimiento.estado === "terminada").length;
 
-export default ViewerSummary
+  const cambiarAPremium = async () => {
+    try {
+      const response = await api.patch(
+        "/usuarios/me/plan",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      dispatch(guardarToken(response.data.token));
+
+      toast.success("Plan actualizado a premium");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error al cambiar de plan");
+    }
+  };
+
+  return (
+    <section className="cards-resumen" id="viewer-resumen">
+      <article className="resumen-card">
+        <h3>Plan actual</h3>
+        <p>{planActual}</p>
+
+        {planActual === "plus" && (
+          <button type="button" onClick={cambiarAPremium}>
+            Cambiar a premium
+          </button>
+        )}
+
+        {planActual === "premium" && <p>Ya tenés plan premium</p>}
+      </article>
+
+      <article className="resumen-card">
+        <h3>Mis seguimientos</h3>
+        <p>{totalSeguimientos}</p>
+      </article>
+
+      <article className="resumen-card">
+        <h3>Favoritas</h3>
+        <p>{totalFavoritas}</p>
+      </article>
+
+      <article className="resumen-card">
+        <h3>Terminadas</h3>
+        <p>{totalTerminadas}</p>
+      </article>
+    </section>
+  );
+};
+
+export default ViewerSummary;

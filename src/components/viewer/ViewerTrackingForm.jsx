@@ -1,76 +1,83 @@
-const ViewerTrackingForm = ({
-  serie,
-  formSeguimiento,
-  onCambiarFormulario,
-  onGuardarSeguimiento,
-  onCancelarSeguimiento,
-}) => {
-  return (
-    <form className="form seguimiento-form" onSubmit={onGuardarSeguimiento}>
-      <h3>Agregar seguimiento: {serie.titulo}</h3>
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 
-      <label>Estado</label>
-      <select
-        name="estado"
-        value={formSeguimiento.estado}
-        onChange={onCambiarFormulario}
-      >
+const ViewerTrackingForm = ({
+  seguimientoEditando,
+  onGuardarSeguimiento,
+  onCancelarEdicion,
+}) => {
+  const { register, handleSubmit, reset } = useForm();
+
+  useEffect(() => {
+    reset({
+      estado: seguimientoEditando.estado,
+      esFavorita: seguimientoEditando.esFavorita ?? false,
+      ratingPersonal: seguimientoEditando.ratingPersonal ?? "",
+      temporadaActual: seguimientoEditando.temporadaActual ?? "",
+      episodioActual: seguimientoEditando.episodioActual ?? "",
+      fechaInicio: seguimientoEditando.fechaInicio
+        ? seguimientoEditando.fechaInicio.substring(0, 10)
+        : "",
+    });
+  }, [seguimientoEditando, reset]);
+
+  const procesarForm = (data) => {
+    onGuardarSeguimiento(data);
+  };
+
+  return (
+    <form className="form seguimiento-form" onSubmit={handleSubmit(procesarForm)}>
+      <h3>
+        Editar seguimiento:{" "}
+        {seguimientoEditando.serie?.titulo || "Serie sin título"}
+      </h3>
+
+      <label htmlFor="estado">Estado</label>
+      <select id="estado" {...register("estado")}>
         <option value="pendiente">Pendiente</option>
         <option value="viendo">Viendo</option>
         <option value="terminada">Terminada</option>
       </select>
 
-      <label>Temporada actual</label>
+      <label htmlFor="temporadaActual">Temporada actual</label>
       <input
+        id="temporadaActual"
         type="number"
         min="0"
-        name="temporadaActual"
         placeholder="Temporada actual"
-        value={formSeguimiento.temporadaActual}
-        onChange={onCambiarFormulario}
+        {...register("temporadaActual", { valueAsNumber: true })}
       />
 
-      <label>Episodio actual</label>
+      <label htmlFor="episodioActual">Episodio actual</label>
       <input
+        id="episodioActual"
         type="number"
         min="0"
-        name="episodioActual"
         placeholder="Episodio actual"
-        value={formSeguimiento.episodioActual}
-        onChange={onCambiarFormulario}
+        {...register("episodioActual", { valueAsNumber: true })}
       />
 
-      <label>Rating personal</label>
+      <label htmlFor="ratingPersonal">Rating personal</label>
       <input
+        id="ratingPersonal"
         type="number"
         min="1"
         max="10"
-        name="ratingPersonal"
         placeholder="Rating personal"
-        value={formSeguimiento.ratingPersonal}
-        onChange={onCambiarFormulario}
+        {...register("ratingPersonal", { valueAsNumber: true })}
       />
 
-      <label>Fecha de inicio</label>
-      <input
-        type="date"
-        name="fechaInicio"
-        value={formSeguimiento.fechaInicio}
-        onChange={onCambiarFormulario}
-      />
+      <label htmlFor="fechaInicio">Fecha de inicio</label>
+      <input id="fechaInicio" type="date" {...register("fechaInicio")} />
 
       <label className="checkbox-line">
-        <input
-          type="checkbox"
-          name="esFavorita"
-          checked={formSeguimiento.esFavorita}
-          onChange={onCambiarFormulario}
-        />
+        <input type="checkbox" {...register("esFavorita")} />
         Favorita
       </label>
 
       <button type="submit">Guardar seguimiento</button>
-      <button type="button" onClick={onCancelarSeguimiento}>
+
+      <button type="button" onClick={onCancelarEdicion}>
         Cancelar
       </button>
     </form>
