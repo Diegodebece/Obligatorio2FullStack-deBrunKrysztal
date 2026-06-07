@@ -26,16 +26,37 @@ const ViewerTracking = () => {
         serie: seguimientoEditando.serie?._id || seguimientoEditando.serie,
         estado: data.estado,
         esFavorita: data.esFavorita,
-        ratingPersonal: Number.isNaN(data.ratingPersonal)
-          ? null
-          : data.ratingPersonal,
-        temporadaActual:
-          data.temporadaActual === "" ? null : Number(data.temporadaActual),
-        episodioActual:
-          data.episodioActual === "" ? null : Number(data.episodioActual),
-        fechaInicio: data.fechaInicio || null,
+        ratingPersonal: null,
+        temporadaActual: null,
+        episodioActual: null,
+        fechaInicio: null,
         fechaFin: null,
       };
+
+      if (data.estado === "viendo") {
+        datosSeguimiento.temporadaActual =
+          data.temporadaActual === "" ? null : Number(data.temporadaActual);
+
+        datosSeguimiento.episodioActual =
+          data.episodioActual === "" ? null : Number(data.episodioActual);
+
+        datosSeguimiento.fechaInicio = data.fechaInicio || null;
+      }
+
+      if (data.estado === "terminada") {
+        datosSeguimiento.temporadaActual =
+          data.temporadaActual === "" ? null : Number(data.temporadaActual);
+
+        datosSeguimiento.episodioActual =
+          data.episodioActual === "" ? null : Number(data.episodioActual);
+
+        datosSeguimiento.fechaInicio = data.fechaInicio || null;
+        datosSeguimiento.fechaFin = data.fechaFin || null;
+
+        datosSeguimiento.ratingPersonal = Number.isNaN(data.ratingPersonal)
+          ? null
+          : data.ratingPersonal;
+      }
 
       const response = await api.patch(
         `/seguimientos/${seguimientoEditando._id}`,
@@ -187,6 +208,20 @@ const ViewerTracking = () => {
               <p>
                 Episodio actual:{" "}
                 {seguimiento.episodioActual || "Sin indicar"}
+              </p>
+
+              <p>
+                Fecha inicio:{" "}
+                {seguimiento.fechaInicio
+                  ? seguimiento.fechaInicio.substring(0, 10)
+                  : "Sin indicar"}
+              </p>
+
+              <p>
+                Fecha fin:{" "}
+                {seguimiento.fechaFin
+                  ? seguimiento.fechaFin.substring(0, 10)
+                  : "Sin indicar"}
               </p>
 
               <p>{seguimiento.esFavorita ? "Favorita" : "No favorita"}</p>
