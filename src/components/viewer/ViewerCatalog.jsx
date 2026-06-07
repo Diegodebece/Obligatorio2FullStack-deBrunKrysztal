@@ -17,12 +17,6 @@ const ViewerCatalog = () => {
   const [categoriaBuscada, setCategoriaBuscada] = useState("");
   const [plataformaBuscada, setPlataformaBuscada] = useState("");
 
-  const [filtros, setFiltros] = useState({
-    titulo: "",
-    categoria: "",
-    plataforma: "",
-  });
-
   const serieYaEstaEnSeguimientos = (serieId) => {
     return seguimientos.some((seguimiento) => {
       const idSerie = seguimiento.serie?._id || seguimiento.serie;
@@ -40,44 +34,32 @@ const ViewerCatalog = () => {
     return categoriaEncontrada?.nombre || "Sin categoría";
   };
 
-  const filtrarSeries = () => {
-    setFiltros({
-      titulo: tituloBuscado,
-      categoria: categoriaBuscada,
-      plataforma: plataformaBuscada,
-    });
-  };
-
   const limpiarFiltros = () => {
     setTituloBuscado("");
     setCategoriaBuscada("");
     setPlataformaBuscada("");
-
-    setFiltros({
-      titulo: "",
-      categoria: "",
-      plataforma: "",
-    });
   };
 
-  const seriesFiltradas = series.filter((serie) => {
-    const coincideTitulo =
-      filtros.titulo === "" ||
-      serie.titulo.toLowerCase().includes(filtros.titulo.toLowerCase());
+  const seriesFiltradas = series
+    .filter((serie) => {
+      const coincideTitulo =
+        tituloBuscado === "" ||
+        serie.titulo.toLowerCase().includes(tituloBuscado.toLowerCase());
 
-    const coincideCategoria =
-      filtros.categoria === "" ||
-      String(serie.categoria?._id || serie.categoria) ===
-        String(filtros.categoria);
+      const coincideCategoria =
+        categoriaBuscada === "" ||
+        String(serie.categoria?._id || serie.categoria) ===
+          String(categoriaBuscada);
 
-    const coincidePlataforma =
-      filtros.plataforma === "" ||
-      serie.plataforma
-        .toLowerCase()
-        .includes(filtros.plataforma.toLowerCase());
+      const coincidePlataforma =
+        plataformaBuscada === "" ||
+        serie.plataforma
+          .toLowerCase()
+          .includes(plataformaBuscada.toLowerCase());
 
-    return coincideTitulo && coincideCategoria && coincidePlataforma;
-  });
+      return coincideTitulo && coincideCategoria && coincidePlataforma;
+    })
+    .sort((serieA, serieB) => serieA.titulo.localeCompare(serieB.titulo));
 
   const agregarSeguimiento = async (serie) => {
     if (serieYaEstaEnSeguimientos(serie._id)) {
@@ -152,14 +134,14 @@ const ViewerCatalog = () => {
           onChange={(event) => setPlataformaBuscada(event.target.value)}
         />
 
-        <button type="button" onClick={filtrarSeries}>
-          Filtrar
-        </button>
-
         <button type="button" onClick={limpiarFiltros}>
-          Limpiar
+          Limpiar filtros
         </button>
       </div>
+
+      <p>
+        Mostrando {seriesFiltradas.length} de {series.length} series
+      </p>
 
       <div className="tarjetas">
         {seriesFiltradas.length === 0 && (

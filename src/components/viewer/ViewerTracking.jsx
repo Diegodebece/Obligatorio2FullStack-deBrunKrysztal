@@ -16,6 +16,7 @@ const ViewerTracking = () => {
   const seguimientos = useSelector((state) => state.seguimientos.seguimientos);
 
   const [seguimientoEditando, setSeguimientoEditando] = useState(null);
+  const [filtroSeguimiento, setFiltroSeguimiento] = useState("todos");
 
   const guardarEdicionSeguimiento = async (data) => {
     try {
@@ -28,12 +29,10 @@ const ViewerTracking = () => {
         ratingPersonal: Number.isNaN(data.ratingPersonal)
           ? null
           : data.ratingPersonal,
-        temporadaActual: Number.isNaN(data.temporadaActual)
-          ? null
-          : data.temporadaActual,
-        episodioActual: Number.isNaN(data.episodioActual)
-          ? null
-          : data.episodioActual,
+        temporadaActual:
+          data.temporadaActual === "" ? null : Number(data.temporadaActual),
+        episodioActual:
+          data.episodioActual === "" ? null : Number(data.episodioActual),
         fechaInicio: data.fechaInicio || null,
         fechaFin: null,
       };
@@ -51,7 +50,7 @@ const ViewerTracking = () => {
       dispatch(
         modificarSeguimiento({
           ...response.data,
-          serie: response.data.serie || seguimientoEditando.serie,
+          serie: seguimientoEditando.serie,
         })
       );
 
@@ -65,6 +64,12 @@ const ViewerTracking = () => {
   };
 
   const borrarSeguimiento = async (id) => {
+    const confirma = confirm("¿Seguro que querés eliminar este seguimiento?");
+
+    if (!confirma) {
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
 
@@ -87,6 +92,28 @@ const ViewerTracking = () => {
     }
   };
 
+  const obtenerTituloSeguimiento = (seguimiento) => {
+    return seguimiento.serie?.titulo || "Serie sin título";
+  };
+
+  const seguimientosFiltrados = seguimientos
+    .filter((seguimiento) => {
+      if (filtroSeguimiento === "todos") {
+        return true;
+      }
+
+      if (filtroSeguimiento === "favoritas") {
+        return seguimiento.esFavorita;
+      }
+
+      return seguimiento.estado === filtroSeguimiento;
+    })
+    .sort((seguimientoA, seguimientoB) =>
+      obtenerTituloSeguimiento(seguimientoA).localeCompare(
+        obtenerTituloSeguimiento(seguimientoB)
+      )
+    );
+
   return (
     <section className="panel" id="viewer-seguimientos">
       <h2>Mis seguimientos</h2>
@@ -99,16 +126,47 @@ const ViewerTracking = () => {
         />
       )}
 
+      <div className="filtros">
+        <button type="button" onClick={() => setFiltroSeguimiento("todos")}>
+          Todos
+        </button>
+
+        <button type="button" onClick={() => setFiltroSeguimiento("pendiente")}>
+          Pendientes
+        </button>
+
+        <button type="button" onClick={() => setFiltroSeguimiento("viendo")}>
+          Viendo
+        </button>
+
+        <button type="button" onClick={() => setFiltroSeguimiento("terminada")}>
+          Terminadas
+        </button>
+
+        <button type="button" onClick={() => setFiltroSeguimiento("favoritas")}>
+          Favoritas
+        </button>
+      </div>
+
+      <p>
+        Mostrando {seguimientosFiltrados.length} de {seguimientos.length}{" "}
+        seguimientos
+      </p>
+
       <div className="tarjetas">
         {seguimientos.length === 0 && <p>No tenés seguimientos todavía.</p>}
 
-        {seguimientos.map((seguimiento) => (
+        {seguimientos.length > 0 && seguimientosFiltrados.length === 0 && (
+          <p>No hay seguimientos para este filtro.</p>
+        )}
+
+        {seguimientosFiltrados.map((seguimiento) => (
           <article className="tarjeta" key={seguimiento._id}>
             <div className="imagen">
               {seguimiento.serie?.imagen ? (
                 <img
                   src={seguimiento.serie.imagen}
-                  alt={seguimiento.serie.titulo}
+                  alt={obtenerTituloSeguimiento(seguimiento)}
                 />
               ) : (
                 "imagenSerie"
@@ -116,7 +174,7 @@ const ViewerTracking = () => {
             </div>
 
             <div>
-              <h3>{seguimiento.serie?.titulo || "Serie sin título"}</h3>
+              <h3>{obtenerTituloSeguimiento(seguimiento)}</h3>
 
               <p>Estado: {seguimiento.estado}</p>
               <p>Rating: {seguimiento.ratingPersonal || "Sin rating"}</p>

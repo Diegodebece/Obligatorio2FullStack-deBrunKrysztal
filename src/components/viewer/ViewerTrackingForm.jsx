@@ -6,7 +6,14 @@ const ViewerTrackingForm = ({
   onGuardarSeguimiento,
   onCancelarEdicion,
 }) => {
-  const { register, handleSubmit, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  const serie = seguimientoEditando.serie;
 
   useEffect(() => {
     reset({
@@ -25,12 +32,21 @@ const ViewerTrackingForm = ({
     onGuardarSeguimiento(data);
   };
 
+  const temporadas = [];
+
+  for (let i = 1; i <= serie.cantidadTemporadas; i++) {
+    temporadas.push(i);
+  }
+
+  const episodios = [];
+
+  for (let i = 1; i <= serie.episodiosPorTemporada; i++) {
+    episodios.push(i);
+  }
+
   return (
     <form className="form seguimiento-form" onSubmit={handleSubmit(procesarForm)}>
-      <h3>
-        Editar seguimiento:{" "}
-        {seguimientoEditando.serie?.titulo || "Serie sin título"}
-      </h3>
+      <h3>Editar seguimiento: {serie?.titulo || "Serie sin título"}</h3>
 
       <label htmlFor="estado">Estado</label>
       <select id="estado" {...register("estado")}>
@@ -40,22 +56,36 @@ const ViewerTrackingForm = ({
       </select>
 
       <label htmlFor="temporadaActual">Temporada actual</label>
-      <input
+      <select
         id="temporadaActual"
-        type="number"
-        min="0"
-        placeholder="Temporada actual"
-        {...register("temporadaActual", { valueAsNumber: true })}
-      />
+        {...register("temporadaActual", {
+          required: false,
+        })}
+      >
+        <option value="">Sin indicar</option>
+
+        {temporadas.map((temporada) => (
+          <option key={temporada} value={temporada}>
+            Temporada {temporada}
+          </option>
+        ))}
+      </select>
 
       <label htmlFor="episodioActual">Episodio actual</label>
-      <input
+      <select
         id="episodioActual"
-        type="number"
-        min="0"
-        placeholder="Episodio actual"
-        {...register("episodioActual", { valueAsNumber: true })}
-      />
+        {...register("episodioActual", {
+          required: false,
+        })}
+      >
+        <option value="">Sin indicar</option>
+
+        {episodios.map((episodio) => (
+          <option key={episodio} value={episodio}>
+            Episodio {episodio}
+          </option>
+        ))}
+      </select>
 
       <label htmlFor="ratingPersonal">Rating personal</label>
       <input
@@ -64,8 +94,22 @@ const ViewerTrackingForm = ({
         min="1"
         max="10"
         placeholder="Rating personal"
-        {...register("ratingPersonal", { valueAsNumber: true })}
+        {...register("ratingPersonal", {
+          valueAsNumber: true,
+          min: {
+            value: 1,
+            message: "El rating mínimo es 1",
+          },
+          max: {
+            value: 10,
+            message: "El rating máximo es 10",
+          },
+        })}
       />
+
+      {errors.ratingPersonal && (
+        <span className="error">{errors.ratingPersonal.message}</span>
+      )}
 
       <label htmlFor="fechaInicio">Fecha de inicio</label>
       <input id="fechaInicio" type="date" {...register("fechaInicio")} />

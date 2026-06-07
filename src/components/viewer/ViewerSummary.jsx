@@ -9,7 +9,6 @@ const ViewerSummary = () => {
   const dispatch = useDispatch();
 
   const token = useSelector((state) => state.auth.token);
-  
   const seguimientos = useSelector((state) => state.seguimientos.seguimientos);
 
   const usuario = jwtDecode(token);
@@ -17,8 +16,15 @@ const ViewerSummary = () => {
 
   const totalSeguimientos = seguimientos.length;
 
-  const totalFavoritas = seguimientos.filter((seguimiento) => seguimiento.esFavorita).length;
-  const totalTerminadas = seguimientos.filter((seguimiento) => seguimiento.estado === "terminada").length;
+  const totalFavoritas = seguimientos.filter(
+    (seguimiento) => seguimiento.esFavorita
+  ).length;
+
+  const totalTerminadas = seguimientos.filter(
+    (seguimiento) => seguimiento.estado === "terminada"
+  ).length;
+
+  const limiteSeguimientos = planActual === "plus" ? 4 : "Sin límite";
 
   const cambiarAPremium = async () => {
     try {
@@ -56,8 +62,10 @@ const ViewerSummary = () => {
       </article>
 
       <article className="resumen-card">
-        <h3>Mis seguimientos</h3>
-        <p>{totalSeguimientos}</p>
+        <h3>Uso del plan</h3>
+        <p>
+          {totalSeguimientos} / {limiteSeguimientos}
+        </p>
       </article>
 
       <article className="resumen-card">
