@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
+import { NavLink } from "react-router";
 
 import api from "../../api/api";
 import LogoutButton from "../logout/LogoutButton";
@@ -30,6 +31,8 @@ const ViewerAside = () => {
     cargarUsuario();
   }, [token]);
 
+  const claseLink = ({ isActive }) => (isActive ? "active" : "");
+
   return (
     <aside className="sidebar">
       <h2>{usuario?.username || "Usuario"}</h2>
@@ -40,22 +43,39 @@ const ViewerAside = () => {
 
       <ul>
         <li>
-          <a href="#viewer-resumen">Resumen</a>
+          <NavLink to="/viewer/resumen" className={claseLink}>
+            Resumen
+          </NavLink>
         </li>
+
         <li>
-          <a href="#catalogo">Catálogo de series</a>
+          <NavLink to="/viewer/plan" className={claseLink}>
+            Mi plan
+          </NavLink>
         </li>
+
         <li>
-          <a href="#viewer-seguimientos">Mis seguimientos</a>
+          <NavLink to="/viewer/catalogo" className={claseLink}>
+            Catálogo de series
+          </NavLink>
         </li>
+
         <li>
-          <a href="#viewer-estadisticas">Estadísticas</a>
+          <NavLink to="/viewer/seguimientos" className={claseLink}>
+            Mis seguimientos
+          </NavLink>
         </li>
+
         <li>
-          <a href="#viewer-ia">Recomendaciones IA</a>
+          <NavLink to="/viewer/estadisticas" className={claseLink}>
+            Estadísticas
+          </NavLink>
         </li>
+
         <li>
-          <a href="#viewer-api">API externa</a>
+          <NavLink to="/viewer/ia" className={claseLink}>
+            Recomendaciones IA
+          </NavLink>
         </li>
       </ul>
 

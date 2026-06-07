@@ -1,11 +1,6 @@
-import React from 'react'
-import ViewerAside from '../components/viewer/ViewerAside'
-import ViewerSummary from '../components/viewer/ViewerSummary'
-import ViewerTracking from '../components/viewer/ViewerTracking'
-import ViewerAI from '../components/viewer/ViewerAI'
-import ViewerCatalog from '../components/viewer/ViewerCatalog'
-import ViewerStats from '../components/viewer/ViewerStats'
-import { useEffect, useState } from "react";
+import { Outlet } from "react-router";
+import ViewerAside from "../components/viewer/ViewerAside";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -14,65 +9,60 @@ import { listarSeries } from "../features/series/series.slice";
 import { listarCategorias } from "../features/categorias/categorias.slice";
 import { listarSeguimientos } from "../features/seguimientos/seguimientos.slice";
 
-
 const ViewerPage = () => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    useEffect(() => {
-        const cargarDatosViewer = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                const [seriesRes, categoriasRes] = await Promise.all([
-                    api.get("/series", {
-                        headers: { Authorization: `Bearer ${token}` },
-                        params: { page: 1, limit: 50 },
-                    }),
-                    api.get("/categorias", {
-                        headers: { Authorization: `Bearer ${token}` },
-                        params: { page: 1, limit: 50 },
-                    }),
-                ]);
+  useEffect(() => {
+    const cargarDatosViewer = async () => {
+      try {
+        const token = localStorage.getItem("token");
 
-                dispatch(listarSeries(seriesRes.data.data));
-                dispatch(listarCategorias(categoriasRes.data.data));
+        const [seriesRes, categoriasRes] = await Promise.all([
+          api.get("/series", {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { page: 1, limit: 50 },
+          }),
+          api.get("/categorias", {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { page: 1, limit: 50 },
+          }),
+        ]);
 
-                try {
-                    const seguimientosRes = await api.get("/seguimientos/me", {
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
+        dispatch(listarSeries(seriesRes.data.data));
+        dispatch(listarCategorias(categoriasRes.data.data));
 
-                    dispatch(listarSeguimientos(seguimientosRes.data.data));
-                } catch (error) {
-                    if (error.response?.status === 404) {
-                        dispatch(listarSeguimientos([]));
-                    } else {
-                        throw error;
-                    }
-                }
-            } catch (error) {
-                toast.error(error.response?.data?.message || "Error al cargar los datos del viewer");
-            }
-        };
+        try {
+          const seguimientosRes = await api.get("/seguimientos/me", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
-        cargarDatosViewer();
-    }, [dispatch]);
+          dispatch(listarSeguimientos(seguimientosRes.data.data));
+        } catch (error) {
+          if (error.response?.status === 404) {
+            dispatch(listarSeguimientos([]));
+          } else {
+            throw error;
+          }
+        }
+      } catch (error) {
+        toast.error(
+          error.response?.data?.message || "Error al cargar los datos del viewer"
+        );
+      }
+    };
 
-    return (
-        <main className="layout">
-            <ViewerAside />
-            <section className="content">
-                <ViewerSummary />
-                <ViewerCatalog />
-                <ViewerTracking />
-                <ViewerStats />
-                <ViewerAI />
+    cargarDatosViewer();
+  }, [dispatch]);
 
+  return (
+    <main className="layout">
+      <ViewerAside />
 
-            </section>
-        </main>
+      <section className="content">
+        <Outlet />
+      </section>
+    </main>
+  );
+};
 
-
-    )
-}
-
-export default ViewerPage
+export default ViewerPage;

@@ -57,12 +57,22 @@ const ViewerTrackingForm = ({
     episodios.push(i);
   }
 
+  const estadoRegister = register("estado");
+
+
   return (
     <form className="form seguimiento-form" onSubmit={handleSubmit(procesarForm)}>
       <h3>Editar seguimiento: {serie?.titulo || "Serie sin título"}</h3>
 
       <label htmlFor="estado">Estado</label>
-      <select id="estado" {...register("estado")} onChange={cambiarEstado}>
+      <select
+        id="estado"
+        {...estadoRegister}
+        onChange={(event) => {
+          estadoRegister.onChange(event);
+          cambiarEstado(event);
+        }}
+      >
         <option value="pendiente">Pendiente</option>
         <option value="viendo">Viendo</option>
         <option value="terminada">Terminada</option>

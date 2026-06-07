@@ -9,6 +9,7 @@ import {
 } from "../../features/seguimientos/seguimientos.slice";
 
 import ViewerTrackingForm from "./ViewerTrackingForm";
+import ViewerRatingModal from "./ViewerRatingModal";
 
 const ViewerTracking = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,162 @@ const ViewerTracking = () => {
 
   const [seguimientoEditando, setSeguimientoEditando] = useState(null);
   const [filtroSeguimiento, setFiltroSeguimiento] = useState("todos");
+  const [seguimientoParaFinalizar, setSeguimientoParaFinalizar] = useState(null);
+  const [ratingFinal, setRatingFinal] = useState(5);
+
+  const obtenerTextoBotonAvance = (seguimiento) => {
+    const serie = seguimiento.serie;
+
+    if (seguimiento.estado === "terminada") {
+      return "Completada";
+    }
+
+    if (
+      seguimiento.estado === "pendiente" ||
+      !seguimiento.temporadaActual ||
+      !seguimiento.episodioActual
+    ) {
+      return "Comencé a verla";
+    }
+
+    const esUltimoEpisodio =
+      seguimiento.episodioActual >= serie.episodiosPorTemporada;
+
+    const esUltimaTemporada =
+      seguimiento.temporadaActual >= serie.cantidadTemporadas;
+
+    if (esUltimoEpisodio && esUltimaTemporada) {
+      return "Terminé la serie";
+    }
+
+    if (esUltimoEpisodio) {
+      return "Siguiente temporada";
+    }
+
+    return "+1 episodio";
+  };
+
+  const avanzarSeguimiento = async (seguimiento) => {
+    try {
+      const token = localStorage.getItem("token");
+      const serie = seguimiento.serie;
+
+      let nuevoEstado = seguimiento.estado;
+      let nuevaTemporada = seguimiento.temporadaActual;
+      let nuevoEpisodio = seguimiento.episodioActual;
+      let nuevaFechaInicio = seguimiento.fechaInicio;
+      let nuevaFechaFin = seguimiento.fechaFin;
+
+      if (
+        seguimiento.estado === "pendiente" ||
+        !seguimiento.temporadaActual ||
+        !seguimiento.episodioActual
+      ) {
+        nuevoEstado = "viendo";
+        nuevaTemporada = 1;
+        nuevoEpisodio = 1;
+        nuevaFechaInicio = seguimiento.fechaInicio || new Date().toISOString();
+        nuevaFechaFin = null;
+      } else {
+        const esUltimoEpisodio =
+          seguimiento.episodioActual >= serie.episodiosPorTemporada;
+
+        const esUltimaTemporada =
+          seguimiento.temporadaActual >= serie.cantidadTemporadas;
+
+        if (esUltimoEpisodio && esUltimaTemporada) {
+          setSeguimientoParaFinalizar(seguimiento);
+          setRatingFinal(seguimiento.ratingPersonal || 5);
+          return;
+        }
+
+        if (esUltimoEpisodio) {
+          nuevoEstado = "viendo";
+          nuevaTemporada = seguimiento.temporadaActual + 1;
+          nuevoEpisodio = 1;
+        } else {
+          nuevoEstado = "viendo";
+          nuevaTemporada = seguimiento.temporadaActual;
+          nuevoEpisodio = seguimiento.episodioActual + 1;
+        }
+      }
+
+      const datosSeguimiento = {
+        serie: serie._id || serie,
+        estado: nuevoEstado,
+        esFavorita: seguimiento.esFavorita,
+        ratingPersonal: seguimiento.ratingPersonal,
+        temporadaActual: nuevaTemporada,
+        episodioActual: nuevoEpisodio,
+        fechaInicio: nuevaFechaInicio,
+        fechaFin: nuevaFechaFin,
+      };
+
+      const response = await api.patch(
+        `/seguimientos/${seguimiento._id}`,
+        datosSeguimiento,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      dispatch(
+        modificarSeguimiento({
+          ...response.data,
+          serie: seguimiento.serie,
+        })
+      );
+
+      toast.success("Progreso actualizado");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Error al actualizar progreso"
+      );
+    }
+  };
+
+  const finalizarSerieConRating = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const seguimiento = seguimientoParaFinalizar;
+      const serie = seguimiento.serie;
+
+      const datosSeguimiento = {
+        serie: serie._id || serie,
+        estado: "terminada",
+        esFavorita: seguimiento.esFavorita,
+        ratingPersonal: Number(ratingFinal),
+        temporadaActual: serie.cantidadTemporadas,
+        episodioActual: serie.episodiosPorTemporada,
+        fechaInicio: seguimiento.fechaInicio || new Date().toISOString(),
+        fechaFin: seguimiento.fechaFin || new Date().toISOString(),
+      };
+
+      const response = await api.patch(
+        `/seguimientos/${seguimiento._id}`,
+        datosSeguimiento,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      dispatch(
+        modificarSeguimiento({
+          ...response.data,
+          serie: seguimiento.serie,
+        })
+      );
+
+      toast.success("Serie marcada como terminada");
+      setSeguimientoParaFinalizar(null);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error al finalizar serie");
+    }
+  };
 
   const guardarEdicionSeguimiento = async (data) => {
     try {
@@ -135,6 +292,7 @@ const ViewerTracking = () => {
       )
     );
 
+
   return (
     <section className="panel" id="viewer-seguimientos">
       <h2>Mis seguimientos</h2>
@@ -210,6 +368,14 @@ const ViewerTracking = () => {
                 {seguimiento.episodioActual || "Sin indicar"}
               </p>
 
+              <button
+                type="button"
+                disabled={seguimiento.estado === "terminada"}
+                onClick={() => avanzarSeguimiento(seguimiento)}
+              >
+                {obtenerTextoBotonAvance(seguimiento)}
+              </button>
+
               <p>
                 Fecha inicio:{" "}
                 {seguimiento.fechaInicio
@@ -244,6 +410,14 @@ const ViewerTracking = () => {
           </article>
         ))}
       </div>
+
+      <ViewerRatingModal
+        seguimiento={seguimientoParaFinalizar}
+        rating={ratingFinal}
+        onCambiarRating={setRatingFinal}
+        onConfirmar={finalizarSerieConRating}
+        onCancelar={() => setSeguimientoParaFinalizar(null)}
+      />
     </section>
   );
 };

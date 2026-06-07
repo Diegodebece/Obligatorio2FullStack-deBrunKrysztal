@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router";
 
 import api from "../../api/api";
 import { crearSeguimiento } from "../../features/seguimientos/seguimientos.slice";
 import ViewerSerieCard from "./ViewerSerieCard";
 
-const ViewerCatalog = () => {
+const ViewerCatalog = ({ onVerPlanes }) => {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const series = useSelector((state) => state.series.series);
   const categorias = useSelector((state) => state.categorias.categorias);
   const seguimientos = useSelector((state) => state.seguimientos.seguimientos);
@@ -40,6 +42,17 @@ const ViewerCatalog = () => {
     setPlataformaBuscada("");
   };
 
+  const obtenerPlanUsuario = () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      return null;
+    }
+
+    const usuario = jwtDecode(token);
+    return usuario.plan;
+  };
+
   const seriesFiltradas = series
     .filter((serie) => {
       const coincideTitulo =
@@ -49,7 +62,7 @@ const ViewerCatalog = () => {
       const coincideCategoria =
         categoriaBuscada === "" ||
         String(serie.categoria?._id || serie.categoria) ===
-          String(categoriaBuscada);
+        String(categoriaBuscada);
 
       const coincidePlataforma =
         plataformaBuscada === "" ||
@@ -64,6 +77,21 @@ const ViewerCatalog = () => {
   const agregarSeguimiento = async (serie) => {
     if (serieYaEstaEnSeguimientos(serie._id)) {
       toast.info("Esta serie ya está en tus seguimientos");
+      return;
+    }
+
+    const planUsuario = obtenerPlanUsuario();
+
+    if (planUsuario === "plus" && seguimientos.length >= 4) {
+      toast.info(
+        <div>
+          <p>Ya tenés tus 4 seguimientos ocupados.</p>
+
+          <button type="button" onClick={() => navigate("/viewer/plan")}>
+            Ver planes disponibles
+          </button>
+        </div>
+      );
       return;
     }
 

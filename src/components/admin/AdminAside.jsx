@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
+import { NavLink } from "react-router";
 
 import api from "../../api/api";
 import LogoutButton from "../logout/LogoutButton";
@@ -21,7 +22,7 @@ const AdminAside = () => {
       });
 
       setUsuario(response.data.data);
-    } catch (error) {
+    } catch {
       setUsuario(null);
     }
   };
@@ -29,6 +30,8 @@ const AdminAside = () => {
   useEffect(() => {
     cargarUsuario();
   }, [token]);
+
+  const claseLink = ({ isActive }) => (isActive ? "active" : "");
 
   return (
     <aside className="sidebar">
@@ -39,16 +42,27 @@ const AdminAside = () => {
 
       <ul>
         <li>
-          <a href="#admin-series">CRUD series</a>
+          <NavLink to="/admin/series" className={claseLink}>
+            CRUD series
+          </NavLink>
         </li>
+
         <li>
-          <a href="#admin-categorias">CRUD categorías</a>
+          <NavLink to="/admin/categorias" className={claseLink}>
+            CRUD categorías
+          </NavLink>
         </li>
+
         <li>
-          <a href="#admin-usuarios">Gestión usuarios</a>
+          <NavLink to="/admin/usuarios" className={claseLink}>
+            Gestión usuarios
+          </NavLink>
         </li>
+
         <li>
-          <a href="#admin-estadisticas">Estadísticas seguimientos</a>
+          <NavLink to="/admin/estadisticas" className={claseLink}>
+            Estadísticas seguimientos
+          </NavLink>
         </li>
       </ul>
 
