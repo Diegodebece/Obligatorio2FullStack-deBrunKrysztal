@@ -1,24 +1,64 @@
-import React from 'react'
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 
-const Aside = () => {
+import api from "../../api/api";
+
+const ViewerAside = () => {
+  const token = useSelector((state) => state.auth.token);
+
+  const [usuario, setUsuario] = useState(null);
+
+  const datosToken = jwtDecode(token);
+
+  const cargarUsuario = async () => {
+    try {
+      const response = await api.get(`/usuarios/${datosToken.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setUsuario(response.data.data);
+    } catch (error) {
+      setUsuario(null);
+    }
+  };
+
+  useEffect(() => {
+    cargarUsuario();
+  }, [token]);
+
   return (
     <aside className="sidebar">
-          <h2>nombreUsuario</h2>
-          <p>emailUsuario</p>
+      <h2>{usuario?.username || "Usuario"}</h2>
+      <p>{usuario?.email || "emailUsuario"}</p>
 
-          <span className="badge">viewer</span>
-          <span className="badge">plus</span>
+      <span className="badge">{datosToken.rol}</span>
+      <span className="badge">{datosToken.plan}</span>
 
-          <ul>
-            <li>Resumen</li>
-            <li>Catálogo de series</li>
-            <li>Mis seguimientos</li>
-            <li>Estadísticas</li>
-            <li>Recomendaciones IA</li>
-            <li>API externa</li>
-          </ul>
-        </aside>
-  )
-}
+      <ul>
+        <li>
+          <a href="#viewer-resumen">Resumen</a>
+        </li>
+        <li>
+          <a href="#catalogo">Catálogo de series</a>
+        </li>
+        <li>
+          <a href="#viewer-seguimientos">Mis seguimientos</a>
+        </li>
+        <li>
+          <a href="#viewer-estadisticas">Estadísticas</a>
+        </li>
+        <li>
+          <a href="#viewer-ia">Recomendaciones IA</a>
+        </li>
+        <li>
+          <a href="#viewer-api">API externa</a>
+        </li>
+      </ul>
+    </aside>
+  );
+};
 
-export default Aside
+export default ViewerAside;
