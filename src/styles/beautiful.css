@@ -523,12 +523,20 @@ a:hover {
   flex-direction: column;
   gap: 1.25rem;
   margin-top: 1.5rem;
+  scroll-margin-top: 140px;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+.seguimiento-form {
+  position: sticky;
+  top: 80px;
+  z-index: 20;
+  background: var(--bg-primary);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  margin-top: 0.5rem;
+  max-width: 100%;
 }
 
 .form-group label {
