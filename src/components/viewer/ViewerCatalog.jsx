@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -11,6 +12,16 @@ const ViewerCatalog = () => {
   const series = useSelector((state) => state.series.series);
   const categorias = useSelector((state) => state.categorias.categorias);
   const seguimientos = useSelector((state) => state.seguimientos.seguimientos);
+
+  const [tituloBuscado, setTituloBuscado] = useState("");
+  const [categoriaBuscada, setCategoriaBuscada] = useState("");
+  const [plataformaBuscada, setPlataformaBuscada] = useState("");
+
+  const [filtros, setFiltros] = useState({
+    titulo: "",
+    categoria: "",
+    plataforma: "",
+  });
 
   const serieYaEstaEnSeguimientos = (serieId) => {
     return seguimientos.some((seguimiento) => {
@@ -28,6 +39,45 @@ const ViewerCatalog = () => {
 
     return categoriaEncontrada?.nombre || "Sin categoría";
   };
+
+  const filtrarSeries = () => {
+    setFiltros({
+      titulo: tituloBuscado,
+      categoria: categoriaBuscada,
+      plataforma: plataformaBuscada,
+    });
+  };
+
+  const limpiarFiltros = () => {
+    setTituloBuscado("");
+    setCategoriaBuscada("");
+    setPlataformaBuscada("");
+
+    setFiltros({
+      titulo: "",
+      categoria: "",
+      plataforma: "",
+    });
+  };
+
+  const seriesFiltradas = series.filter((serie) => {
+    const coincideTitulo =
+      filtros.titulo === "" ||
+      serie.titulo.toLowerCase().includes(filtros.titulo.toLowerCase());
+
+    const coincideCategoria =
+      filtros.categoria === "" ||
+      String(serie.categoria?._id || serie.categoria) ===
+        String(filtros.categoria);
+
+    const coincidePlataforma =
+      filtros.plataforma === "" ||
+      serie.plataforma
+        .toLowerCase()
+        .includes(filtros.plataforma.toLowerCase());
+
+    return coincideTitulo && coincideCategoria && coincidePlataforma;
+  });
 
   const agregarSeguimiento = async (serie) => {
     if (serieYaEstaEnSeguimientos(serie._id)) {
@@ -75,21 +125,48 @@ const ViewerCatalog = () => {
       <h2>Catálogo de series</h2>
 
       <div className="filtros">
-        <input type="text" placeholder="Buscar por título" />
+        <input
+          type="text"
+          placeholder="Buscar por título"
+          value={tituloBuscado}
+          onChange={(event) => setTituloBuscado(event.target.value)}
+        />
 
-        <select>
-          <option>Categoría</option>
+        <select
+          value={categoriaBuscada}
+          onChange={(event) => setCategoriaBuscada(event.target.value)}
+        >
+          <option value="">Todas las categorías</option>
+
+          {categorias.map((categoria) => (
+            <option key={categoria._id} value={categoria._id}>
+              {categoria.nombre}
+            </option>
+          ))}
         </select>
 
-        <input type="text" placeholder="Plataforma" />
+        <input
+          type="text"
+          placeholder="Plataforma"
+          value={plataformaBuscada}
+          onChange={(event) => setPlataformaBuscada(event.target.value)}
+        />
 
-        <button type="button">Filtrar</button>
+        <button type="button" onClick={filtrarSeries}>
+          Filtrar
+        </button>
+
+        <button type="button" onClick={limpiarFiltros}>
+          Limpiar
+        </button>
       </div>
 
       <div className="tarjetas">
-        {series.length === 0 && <p>No hay series disponibles.</p>}
+        {seriesFiltradas.length === 0 && (
+          <p>No hay series que coincidan con la búsqueda.</p>
+        )}
 
-        {series.map((serie) => (
+        {seriesFiltradas.map((serie) => (
           <ViewerSerieCard
             key={serie._id}
             serie={serie}
