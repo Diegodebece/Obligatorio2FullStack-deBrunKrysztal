@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 
 import api from "../../api/api";
+import LogoutButton from "../logout/LogoutButton";
 
 const ViewerAside = () => {
   const token = useSelector((state) => state.auth.token);
@@ -57,6 +58,8 @@ const ViewerAside = () => {
           <a href="#viewer-api">API externa</a>
         </li>
       </ul>
+
+      <LogoutButton />
     </aside>
   );
 };
