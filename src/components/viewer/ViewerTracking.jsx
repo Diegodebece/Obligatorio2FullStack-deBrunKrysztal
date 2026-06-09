@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -297,14 +297,6 @@ const ViewerTracking = () => {
     <section className="panel" id="viewer-seguimientos">
       <h2>Mis seguimientos</h2>
 
-      {seguimientoEditando && (
-        <ViewerTrackingForm
-          seguimientoEditando={seguimientoEditando}
-          onGuardarSeguimiento={guardarEdicionSeguimiento}
-          onCancelarEdicion={() => setSeguimientoEditando(null)}
-        />
-      )}
-
       <div className="filtros">
         <button type="button" onClick={() => setFiltroSeguimiento("todos")}>
           Todos
@@ -339,76 +331,84 @@ const ViewerTracking = () => {
           <p>No hay seguimientos para este filtro.</p>
         )}
 
-        {seguimientosFiltrados.map((seguimiento) => (
-          <article className="tarjeta" key={seguimiento._id}>
-            <div className="imagen">
-              {seguimiento.serie?.imagen ? (
-                <img
-                  src={seguimiento.serie.imagen}
-                  alt={obtenerTituloSeguimiento(seguimiento)}
-                />
-              ) : (
-                "imagenSerie"
-              )}
-            </div>
+        {seguimientosFiltrados.map((seguimiento) => {
+          const estaEditando = seguimientoEditando?._id === seguimiento._id;
+          return (
+            <article className="tarjeta" key={seguimiento._id}>
+              <div className="imagen">
+                {seguimiento.serie?.imagen ? (
+                  <img
+                    src={seguimiento.serie.imagen}
+                    alt={obtenerTituloSeguimiento(seguimiento)}
+                  />
+                ) : (
+                  "imagenSerie"
+                )}
+              </div>
 
-            <div>
-              <h3>{obtenerTituloSeguimiento(seguimiento)}</h3>
+              <div>
+                {estaEditando ? (
+                  <ViewerTrackingForm
+                    seguimientoEditando={seguimiento}
+                    onGuardarSeguimiento={guardarEdicionSeguimiento}
+                    onCancelarEdicion={() => setSeguimientoEditando(null)}
+                  />
+                ) : (
+                  <>
+                    <h3>{obtenerTituloSeguimiento(seguimiento)}</h3>
 
-              <p>Estado: {seguimiento.estado}</p>
-              <p>Rating: {seguimiento.ratingPersonal || "Sin rating"}</p>
+                    <p>Estado: {seguimiento.estado}</p>
+                    <p>Rating: {seguimiento.ratingPersonal || "Sin rating"}</p>
 
-              <p>
-                Temporada actual:{" "}
-                {seguimiento.temporadaActual || "Sin indicar"}
-              </p>
+                    <p>
+                      Temporada actual: {seguimiento.temporadaActual || "Sin indicar"}
+                    </p>
 
-              <p>
-                Episodio actual:{" "}
-                {seguimiento.episodioActual || "Sin indicar"}
-              </p>
+                    <p>
+                      Episodio actual: {seguimiento.episodioActual || "Sin indicar"}
+                    </p>
 
-              <button
-                type="button"
-                disabled={seguimiento.estado === "terminada"}
-                onClick={() => avanzarSeguimiento(seguimiento)}
-              >
-                {obtenerTextoBotonAvance(seguimiento)}
-              </button>
+                    <button
+                      type="button"
+                      disabled={seguimiento.estado === "terminada"}
+                      onClick={() => avanzarSeguimiento(seguimiento)}
+                    >
+                      {obtenerTextoBotonAvance(seguimiento)}
+                    </button>
 
-              <p>
-                Fecha inicio:{" "}
-                {seguimiento.fechaInicio
-                  ? seguimiento.fechaInicio.substring(0, 10)
-                  : "Sin indicar"}
-              </p>
+                    <p>
+                      Fecha inicio:{" "}
+                      {seguimiento.fechaInicio
+                        ? seguimiento.fechaInicio.substring(0, 10)
+                        : "Sin indicar"}
+                    </p>
 
-              <p>
-                Fecha fin:{" "}
-                {seguimiento.fechaFin
-                  ? seguimiento.fechaFin.substring(0, 10)
-                  : "Sin indicar"}
-              </p>
+                    <p>
+                      Fecha fin:{" "}
+                      {seguimiento.fechaFin
+                        ? seguimiento.fechaFin.substring(0, 10)
+                        : "Sin indicar"}
+                    </p>
 
-              <p>{seguimiento.esFavorita ? "Favorita" : "No favorita"}</p>
+                    <p>{seguimiento.esFavorita ? "Favorita" : "No favorita"}</p>
 
-              <button
-                type="button"
-                onClick={() => setSeguimientoEditando(seguimiento)}
-              >
-                Editar
-              </button>
+                    <button type="button" onClick={() => setSeguimientoEditando(seguimiento)}>
+                      Editar
+                    </button>
 
-              <button
-                type="button"
-                className="danger"
-                onClick={() => borrarSeguimiento(seguimiento._id)}
-              >
-                Eliminar
-              </button>
-            </div>
-          </article>
-        ))}
+                    <button
+                      type="button"
+                      className="danger"
+                      onClick={() => borrarSeguimiento(seguimiento._id)}
+                    >
+                      Eliminar
+                    </button>
+                  </>
+                )}
+              </div>
+            </article>
+          );
+        })}
       </div>
 
       <ViewerRatingModal

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
@@ -12,18 +13,28 @@ import { loginUsuarioSchema } from "../../validators/auth.validators";
 const LoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [errorLogin, setErrorLogin] = useState("");
 
-  const { register, handleSubmit, formState: { errors, isSubmitting, isDirty, isValid },} = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isDirty, isValid },
+  } = useForm({
     resolver: joiResolver(loginUsuarioSchema),
     mode: "onChange",
   });
 
- const procesarForm = async (data) => {
+  const procesarForm = async (data) => {
     try {
+      setErrorLogin("");
+
       const response = await api.post("/auth/login", data);
       const token = response.data.token;
+
       dispatch(guardarToken(token));
+
       const usuario = jwtDecode(token);
+
       toast.success("¡Bienvenido!");
 
       if (usuario.rol === "admin") {
@@ -32,7 +43,9 @@ const LoginForm = () => {
         navigate("/viewer");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Error al iniciar sesión");
+      setErrorLogin(
+        error.response?.data?.message || "Email o contraseña incorrectos"
+      );
     }
   };
 
@@ -42,34 +55,22 @@ const LoginForm = () => {
         <div className="form-group">
           <label htmlFor="email">Email:</label>
 
-          <input
-            type="email"
-            id="email"
-            {...register("email")}
-          />
+          <input type="email" id="email" {...register("email")} />
 
-          {errors.email && (
-            <span className="error">
-              {errors.email.message}
-            </span>
-          )}
+          {errors.email && <span className="error">{errors.email.message}</span>}
         </div>
 
         <div className="form-group">
           <label htmlFor="password">Contraseña:</label>
 
-          <input
-            type="password"
-            id="password"
-            {...register("password")}
-          />
+          <input type="password" id="password" {...register("password")} />
 
           {errors.password && (
-            <span className="error">
-              {errors.password.message}
-            </span>
+            <span className="error">{errors.password.message}</span>
           )}
         </div>
+
+        {errorLogin && <p className="form-error-general">{errorLogin}</p>}
 
         <button type="submit" disabled={isSubmitting || !isDirty || !isValid}>
           Ingresar

@@ -31,8 +31,8 @@ const ViewerAI = () => {
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          error.response?.data?.mensaje ||
-          "Error al generar recomendaciones"
+        error.response?.data?.mensaje ||
+        "Error al generar recomendaciones"
       );
     } finally {
       setCargandoIA(false);
@@ -59,8 +59,8 @@ const ViewerAI = () => {
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          error.response?.data?.mensaje ||
-          "Error al cargar series externas"
+        error.response?.data?.mensaje ||
+        "Error al cargar series externas"
       );
     } finally {
       setCargandoExternas(false);
@@ -116,28 +116,50 @@ const ViewerAI = () => {
   };
 
   return (
-    <>
-      <section className="panel" id="viewer-ia">
-        <h2>Recomendaciones con IA</h2>
 
-        <p>
-          Generá recomendaciones según tus seguimientos actuales.
+    <section className="panel" id="viewer-ia">
+      <h2>Recomendaciones con IA</h2>
+
+      <p>
+        Generá recomendaciones según tus seguimientos actuales.
+      </p>
+
+      <button
+        type="button"
+        onClick={generarRecomendaciones}
+        disabled={cargandoIA}
+      >
+        {cargandoIA ? (
+          <>
+            <span className="spinner"></span>
+            Generando...
+          </>
+        ) : (
+          "Generar recomendaciones"
+        )}
+      </button>
+
+      {!cargandoIA && recomendaciones.length > 0 && (
+        <p className="mensaje-recomendaciones">
+          Tu próxima serie favorita puede ser una de estas!!
         </p>
+      )}
 
-        <button
-          type="button"
-          onClick={generarRecomendaciones}
-          disabled={cargandoIA}
-        >
-          {cargandoIA ? "Generando..." : "Generar recomendaciones"}
-        </button>
+      <div className="tarjetas">
+        {cargandoIA && (
+          <div className="loading-panel">
+            <span className="spinner spinner-grande"></span>
+            <span>Buscando las mejores series en base a tus gustos...</span>
+          </div>
+        )}
 
-        <div className="tarjetas">
-          {recomendaciones.length === 0 && (
-            <p>Todavía no generaste recomendaciones.</p>
-          )}
+        {!cargandoIA && recomendaciones.length === 0 && (
+          <p>Todavía no generaste recomendaciones.</p>
+        )}
 
-          {recomendaciones.map((serie, index) => (
+        {!cargandoIA &&
+          recomendaciones.map((serie, index) => (
+
             <article className="tarjeta" key={index}>
               <div className="imagen">
                 {obtenerImagen(serie) ? (
@@ -160,8 +182,7 @@ const ViewerAI = () => {
               </div>
             </article>
           ))}
-        </div>
-      </section>
+      </div>
 
       <section className="panel" id="viewer-api">
         <h2>API externa</h2>
@@ -175,7 +196,14 @@ const ViewerAI = () => {
           onClick={cargarSeriesExternas}
           disabled={cargandoExternas}
         >
-          {cargandoExternas ? "Cargando..." : "Ver series populares"}
+          {cargandoExternas ? (
+            <>
+              <span className="spinner"></span>
+              Cargando...
+            </>
+          ) : (
+            "Ver series populares"
+          )}
         </button>
 
         <div className="tarjetas">
@@ -208,7 +236,7 @@ const ViewerAI = () => {
           ))}
         </div>
       </section>
-    </>
+    </section>
   );
 };
 

@@ -3,14 +3,16 @@ import { jwtDecode } from "jwt-decode";
 const ViewerPlan = () => {
   const token = localStorage.getItem("token");
   const usuario = token ? jwtDecode(token) : null;
-  const planActual = usuario?.plan || "plus";
+  const planActual = usuario?.plan || "Plus";
+  const planActualFormateado =
+  planActual.charAt(0).toUpperCase() + planActual.slice(1);
 
   return (
     <section className="panel" id="viewer-plan">
       <h2>Mi plan</h2>
 
       <p>
-        Tu plan actual: <strong>{planActual}</strong>
+        Tu plan actual: <strong>{planActualFormateado}</strong>
       </p>
 
       <table>
@@ -24,33 +26,39 @@ const ViewerPlan = () => {
 
         <tbody>
           <tr>
-            <td>Seguimientos activos</td>
-            <td>4</td>
-            <td>Ilimitados</td>
+            <td>📺 Seguimientos activos</td>
+            <td>4 series</td>
+            <td>♾️ Ilimitados</td>
           </tr>
 
           <tr>
-            <td>Estadísticas personales</td>
-            <td>Sí</td>
-            <td>Sí</td>
+            <td>📊 Estadísticas personales</td>
+            <td>✅ Incluidas</td>
+            <td>✅ Incluidas</td>
           </tr>
 
           <tr>
-            <td>Recomendaciones IA</td>
-            <td>Limitadas</td>
-            <td>Ilimitadas</td>
+            <td>🤖 Recomendaciones IA</td>
+            <td>⚠️ Limitadas</td>
+            <td>✨ Ilimitadas</td>
           </tr>
 
           <tr>
-            <td>Series favoritas</td>
-            <td>Sí</td>
-            <td>Sí</td>
+            <td>⭐ Series favoritas</td>
+            <td>✅ Incluidas</td>
+            <td>✅ Incluidas</td>
           </tr>
 
           <tr>
-            <td>Soporte prioritario</td>
-            <td>No</td>
-            <td>Sí</td>
+            <td>🚀 Soporte prioritario</td>
+            <td>❌ No incluido</td>
+            <td>✅ Incluido</td>
+          </tr>
+
+          <tr>
+            <td>🍿 Ideal para</td>
+            <td>Uso casual</td>
+            <td>Maratones sin límite</td>
           </tr>
         </tbody>
       </table>

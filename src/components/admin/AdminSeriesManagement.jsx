@@ -10,6 +10,8 @@ import {
   eliminarSerie,
 } from "../../features/series/series.slice";
 
+import { listarCategorias } from "../../features/categorias/categorias.slice";
+
 import AdminSerieCard from "./AdminSerieCard";
 import AdminSerieForm from "./AdminSerieForm";
 
@@ -32,9 +34,32 @@ const AdminSeriesManagement = () => {
     } catch (error) {
       toast.error("Error al cargar series");
     }
+
+    
   };
 
+  const cargarCategorias = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await api.get("/categorias", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        page: 1,
+        limit: 50,
+      },
+    });
+
+    dispatch(listarCategorias(response.data.data));
+  } catch (error) {
+    toast.error("Error al cargar categorías");
+  }
+};
+  
   useEffect(() => {
+    cargarCategorias();
     cargarSeries();
   }, []);
 

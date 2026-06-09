@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import CalendarInput from "../common/CalendarInput";
 
 const ViewerTrackingForm = ({
   seguimientoEditando,
@@ -17,6 +18,9 @@ const ViewerTrackingForm = ({
     seguimientoEditando.estado
   );
 
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
+
   const serie = seguimientoEditando.serie;
 
   useEffect(() => {
@@ -26,19 +30,29 @@ const ViewerTrackingForm = ({
       ratingPersonal: seguimientoEditando.ratingPersonal ?? "",
       temporadaActual: seguimientoEditando.temporadaActual ?? "",
       episodioActual: seguimientoEditando.episodioActual ?? "",
-      fechaInicio: seguimientoEditando.fechaInicio
-        ? seguimientoEditando.fechaInicio.substring(0, 10)
-        : "",
-      fechaFin: seguimientoEditando.fechaFin
-        ? seguimientoEditando.fechaFin.substring(0, 10)
-        : "",
     });
+
+    setFechaInicio(
+      seguimientoEditando.fechaInicio
+        ? seguimientoEditando.fechaInicio.substring(0, 10)
+        : ""
+    );
+
+    setFechaFin(
+      seguimientoEditando.fechaFin
+        ? seguimientoEditando.fechaFin.substring(0, 10)
+        : ""
+    );
 
     setEstadoSeleccionado(seguimientoEditando.estado);
   }, [seguimientoEditando, reset]);
 
   const procesarForm = (data) => {
-    onGuardarSeguimiento(data);
+    onGuardarSeguimiento({
+      ...data,
+      fechaInicio,
+      fechaFin,
+    });
   };
 
   const cambiarEstado = (event) => {
@@ -58,7 +72,6 @@ const ViewerTrackingForm = ({
   }
 
   const estadoRegister = register("estado");
-
 
   return (
     <form className="form seguimiento-form" onSubmit={handleSubmit(procesarForm)}>
@@ -102,15 +115,23 @@ const ViewerTrackingForm = ({
             ))}
           </select>
 
-          <label htmlFor="fechaInicio">Fecha de inicio</label>
-          <input id="fechaInicio" type="date" {...register("fechaInicio")} />
+          <CalendarInput
+            id="fechaInicio"
+            label="Fecha de inicio"
+            value={fechaInicio}
+            onChange={setFechaInicio}
+          />
         </>
       )}
 
       {estadoSeleccionado === "terminada" && (
         <>
-          <label htmlFor="fechaFin">Fecha de fin</label>
-          <input id="fechaFin" type="date" {...register("fechaFin")} />
+          <CalendarInput
+            id="fechaFin"
+            label="Fecha de fin"
+            value={fechaFin}
+            onChange={setFechaFin}
+          />
 
           <label htmlFor="ratingPersonal">Rating personal</label>
           <input

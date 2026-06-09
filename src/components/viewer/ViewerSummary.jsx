@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
+import { Link } from "react-router";
 
 import api from "../../api/api";
 import { guardarToken } from "../../features/auth/auth.slice";
@@ -13,6 +14,8 @@ const ViewerSummary = () => {
 
   const usuario = jwtDecode(token);
   const planActual = usuario.plan;
+  const planActualFormateado =
+    planActual.charAt(0).toUpperCase() + planActual.slice(1);
 
   const totalSeguimientos = seguimientos.length;
 
@@ -25,6 +28,10 @@ const ViewerSummary = () => {
   ).length;
 
   const limiteSeguimientos = planActual === "plus" ? 4 : "Sin límite";
+  const porcentajeUsoPlan =
+    planActual === "plus"
+      ? Math.round((totalSeguimientos / 4) * 100)
+      : 100;
 
   const cambiarAPremium = async () => {
     try {
@@ -50,7 +57,7 @@ const ViewerSummary = () => {
     <section className="cards-resumen" id="viewer-resumen">
       <article className="resumen-card">
         <h3>Plan actual</h3>
-        <p>{planActual}</p>
+        <p>{planActualFormateado}</p>
 
         {planActual === "plus" && (
           <button type="button" onClick={cambiarAPremium}>
@@ -64,8 +71,14 @@ const ViewerSummary = () => {
       <article className="resumen-card">
         <h3>Uso del plan</h3>
         <p>
-          {totalSeguimientos} / {limiteSeguimientos}
+          {porcentajeUsoPlan}% ({totalSeguimientos} de {limiteSeguimientos} seguimientos)
         </p>
+        <div className="barra-progreso">
+          <div
+            className="barra-progreso-rellena"
+            style={{ width: `${porcentajeUsoPlan}%` }}
+          />
+        </div>
       </article>
 
       <article className="resumen-card">
@@ -77,6 +90,54 @@ const ViewerSummary = () => {
         <h3>Terminadas</h3>
         <p>{totalTerminadas}</p>
       </article>
+
+
+      {seguimientos.length === 0 ? (
+        <div className="resumen-vacio">
+          <p>Todavía no tenés seguimientos.</p>
+
+          <Link to="/viewer/catalogo">
+            Ir al catálogo de series
+          </Link>
+        </div>
+      ) : (
+        <>
+          <h3>Mis series {" "}
+            <Link className="titulo-link-secundario" to="/viewer/seguimientos">
+              (editar)
+            </Link>
+          </h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Serie</th>
+                <th>Estado</th>
+                <th>Favorita</th>
+                <th>Rating</th>
+                <th>Temporada</th>
+                <th>Episodio</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {seguimientos.map((seguimiento) => (
+                <tr key={seguimiento._id}>
+                  <td>{seguimiento.serie?.titulo || "Serie sin título"}</td>
+                  <td>{seguimiento.estado}</td>
+                  <td>{seguimiento.esFavorita ? "Sí" : "No"}</td>
+                  <td>{seguimiento.ratingPersonal ?? "Sin rankear"}</td>
+                  <td>{seguimiento.temporadaActual ?? "Sin indicar"}</td>
+                  <td>{seguimiento.episodioActual ?? "Sin indicar"}</td>
+
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
+
+
     </section>
   );
 };

@@ -14,40 +14,85 @@ const ViewerPage = () => {
 
   useEffect(() => {
     const cargarDatosViewer = async () => {
-      try {
-        const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
-        const [seriesRes, categoriasRes] = await Promise.all([
-          api.get("/series", {
-            headers: { Authorization: `Bearer ${token}` },
-            params: { page: 1, limit: 50 },
-          }),
-          api.get("/categorias", {
-            headers: { Authorization: `Bearer ${token}` },
-            params: { page: 1, limit: 50 },
-          }),
-        ]);
+      try {
+        const seriesRes = await api.get("/series", {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { page: 1, limit: 50 },
+        });
 
         dispatch(listarSeries(seriesRes.data.data));
+      } catch (error) {
+        try {
+          await esperar(3000);
+
+          const seriesRes = await api.get("/series", {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { page: 1, limit: 50 },
+          });
+
+          dispatch(listarSeries(seriesRes.data.data));
+        } catch (errorRetry) {
+          toast.error(
+            errorRetry.response?.data?.message || "Error al cargar series"
+          );
+        }
+      }
+
+      try {
+        const categoriasRes = await api.get("/categorias", {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { page: 1, limit: 50 },
+        });
+
         dispatch(listarCategorias(categoriasRes.data.data));
+      } catch (error) {
+        try {
+          await esperar(3000);
+
+          const categoriasRes = await api.get("/categorias", {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { page: 1, limit: 50 },
+          });
+
+          dispatch(listarCategorias(categoriasRes.data.data));
+        } catch (errorRetry) {
+          toast.error(
+            errorRetry.response?.data?.message || "Error al cargar categorías"
+          );
+        }
+      }
+
+      try {
+        const seguimientosRes = await api.get("/seguimientos/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        dispatch(listarSeguimientos(seguimientosRes.data.data));
+      } catch (error) {
+        if (error.response?.status === 404) {
+          dispatch(listarSeguimientos([]));
+          return;
+        }
 
         try {
+          await esperar(3000);
+
           const seguimientosRes = await api.get("/seguimientos/me", {
             headers: { Authorization: `Bearer ${token}` },
           });
 
           dispatch(listarSeguimientos(seguimientosRes.data.data));
-        } catch (error) {
-          if (error.response?.status === 404) {
+        } catch (errorRetry) {
+          if (errorRetry.response?.status === 404) {
             dispatch(listarSeguimientos([]));
           } else {
-            throw error;
+            toast.error(
+              errorRetry.response?.data?.message || "Error al cargar seguimientos"
+            );
           }
         }
-      } catch (error) {
-        toast.error(
-          error.response?.data?.message || "Error al cargar los datos del viewer"
-        );
       }
     };
 
