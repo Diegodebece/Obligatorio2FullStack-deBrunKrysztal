@@ -28,6 +28,10 @@ const AdminSeriesManagement = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        params: {
+          page: 1,
+          limit: 50,
+        },
       });
 
       dispatch(listarSeries(response.data.data));
@@ -35,29 +39,29 @@ const AdminSeriesManagement = () => {
       toast.error("Error al cargar series");
     }
 
-    
+
   };
 
   const cargarCategorias = async () => {
-  try {
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
 
-    const response = await api.get("/categorias", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
-        page: 1,
-        limit: 50,
-      },
-    });
+      const response = await api.get("/categorias", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          page: 1,
+          limit: 50,
+        },
+      });
 
-    dispatch(listarCategorias(response.data.data));
-  } catch (error) {
-    toast.error("Error al cargar categorías");
-  }
-};
-  
+      dispatch(listarCategorias(response.data.data));
+    } catch (error) {
+      toast.error("Error al cargar categorías");
+    }
+  };
+
   useEffect(() => {
     cargarCategorias();
     cargarSeries();
