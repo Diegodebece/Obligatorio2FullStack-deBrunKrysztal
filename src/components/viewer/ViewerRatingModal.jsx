@@ -1,3 +1,6 @@
+import Modal from "react-modal";
+Modal.setAppElement("#root");
+
 const ViewerRatingModal = ({
   seguimiento,
   rating,
@@ -10,11 +13,17 @@ const ViewerRatingModal = ({
   }
 
   return (
-    <div className="modal-rating">
-      <div className="modal-rating-contenido">
+    <Modal
+    isOpen={Boolean(seguimiento)}
+    onRequestClose={onCancelar}
+    className="modal-rating-contenido"
+    overlayClassName="modal-rating"
+  >
+
         <h3>Terminaste {seguimiento.serie?.titulo || "la serie"}</h3>
 
         <p>¿Qué rating le das?</p>
+        <p><small>No podrás darla por terminada si no la calificás</small></p>
 
         <div>
           <span>😴 1</span>
@@ -24,7 +33,7 @@ const ViewerRatingModal = ({
             min="1"
             max="10"
             value={rating}
-            onChange={(event) => onCambiarRating(event.target.value)}
+            onChange={(event) => onCambiarRating(Number(event.target.value))}
           />
 
           <span>🤩 10</span>
@@ -39,8 +48,8 @@ const ViewerRatingModal = ({
         <button type="button" onClick={onCancelar}>
           Cancelar
         </button>
-      </div>
-    </div>
+      
+    </Modal>
   );
 };
 

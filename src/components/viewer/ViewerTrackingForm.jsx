@@ -11,7 +11,7 @@ const ViewerTrackingForm = ({
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
   const [estadoSeleccionado, setEstadoSeleccionado] = useState(
@@ -47,8 +47,8 @@ const ViewerTrackingForm = ({
     setEstadoSeleccionado(seguimientoEditando.estado);
   }, [seguimientoEditando, reset]);
 
-  const procesarForm = (data) => {
-    onGuardarSeguimiento({
+  const procesarForm = async (data) => {
+    await onGuardarSeguimiento({
       ...data,
       fechaInicio,
       fechaFin,
@@ -120,6 +120,7 @@ const ViewerTrackingForm = ({
             label="Fecha de inicio"
             value={fechaInicio}
             onChange={setFechaInicio}
+            mostrarCalendario={false}
           />
         </>
       )}
@@ -131,6 +132,7 @@ const ViewerTrackingForm = ({
             label="Fecha de fin"
             value={fechaFin}
             onChange={setFechaFin}
+            mostrarCalendario={false}
           />
 
           <label htmlFor="ratingPersonal">Rating personal</label>
@@ -164,7 +166,16 @@ const ViewerTrackingForm = ({
         Favorita
       </label>
 
-      <button type="submit">Guardar seguimiento</button>
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? (
+          <>
+            <span className="spinner"></span>
+            Guardando...
+          </>
+        ) : (
+          "Guardar seguimiento"
+        )}
+      </button>
 
       <button type="button" onClick={onCancelarEdicion}>
         Cancelar

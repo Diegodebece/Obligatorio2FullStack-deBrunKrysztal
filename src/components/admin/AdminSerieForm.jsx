@@ -46,7 +46,7 @@ const AdminSerieForm = ({
     }
   }, [serieEditando, reset]);
 
-  const procesarForm = (data) => {
+  const procesarForm = async (data) => {
     const formData = new FormData();
 
     formData.append("titulo", data.titulo);
@@ -61,7 +61,7 @@ const AdminSerieForm = ({
       formData.append("imagen", data.imagen[0]);
     }
 
-    onGuardarSerie(formData);
+    await onGuardarSerie(formData);
   };
 
   return (
@@ -70,7 +70,7 @@ const AdminSerieForm = ({
       <input
         id="serie-titulo"
         type="text"
-        placeholder="nombreSerie"
+        placeholder="Título de la serie"
         {...register("titulo")}
       />
 
@@ -81,7 +81,7 @@ const AdminSerieForm = ({
       <label htmlFor="serie-descripcion">Descripción</label>
       <textarea
         id="serie-descripcion"
-        placeholder="descripcionSerie"
+        placeholder="Descripción de la serie"
         {...register("descripcion")}
       ></textarea>
 
@@ -93,7 +93,7 @@ const AdminSerieForm = ({
       <input
         id="serie-plataforma"
         type="text"
-        placeholder="plataformaSerie"
+        placeholder="Plataforma de la serie"
         {...register("plataforma")}
       />
 
@@ -120,7 +120,7 @@ const AdminSerieForm = ({
       <input
         id="serie-temporadas"
         type="number"
-        placeholder="cantidadTemporadas"
+        placeholder="Cantidad de temporadas"
         {...register("cantidadTemporadas", { valueAsNumber: true })}
       />
 
@@ -132,7 +132,7 @@ const AdminSerieForm = ({
       <input
         id="serie-episodios"
         type="number"
-        placeholder="episodiosPorTemporada"
+        placeholder="Episodios por temporada"
         {...register("episodiosPorTemporada", { valueAsNumber: true })}
       />
 
@@ -144,7 +144,7 @@ const AdminSerieForm = ({
       <input
         id="serie-minutos"
         type="number"
-        placeholder="minutosPorEpisodio"
+        placeholder="Minutos por episodio"
         {...register("minutosPorEpisodio", { valueAsNumber: true })}
       />
 
@@ -159,10 +159,17 @@ const AdminSerieForm = ({
         error={errors.imagen}
       />
 
-        
+
 
       <button type="submit" disabled={isSubmitting || !isDirty || !isValid}>
-        {serieEditando ? "Modificar serie" : "Guardar serie"}
+        {isSubmitting ? (
+          <>
+            <span className="spinner"></span>
+            Guardando . . .
+          </>
+        ) : (
+          serieEditando ? "Modificar serie" : "Guardar serie"
+        )}
       </button>
 
       {serieEditando && (

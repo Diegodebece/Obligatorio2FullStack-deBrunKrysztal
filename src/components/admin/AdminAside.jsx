@@ -27,6 +27,8 @@ const AdminAside = () => {
     }
   };
 
+  
+
   useEffect(() => {
     cargarUsuario();
   }, [token]);
@@ -43,25 +45,25 @@ const AdminAside = () => {
       <ul>
         <li>
           <NavLink to="/admin/series" className={claseLink}>
-            CRUD series
+            Gestionar series
           </NavLink>
         </li>
 
         <li>
           <NavLink to="/admin/categorias" className={claseLink}>
-            CRUD categorías
+            Gestionar categorías
           </NavLink>
         </li>
 
         <li>
           <NavLink to="/admin/usuarios" className={claseLink}>
-            Gestión usuarios
+            Gestionar usuarios
           </NavLink>
         </li>
 
         <li>
           <NavLink to="/admin/estadisticas" className={claseLink}>
-            Estadísticas seguimientos
+            Estadísticas de seguimientos
           </NavLink>
         </li>
       </ul>

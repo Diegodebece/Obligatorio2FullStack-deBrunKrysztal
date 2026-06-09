@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { DayPicker } from "@daypicker/react";
 
-const CalendarInput = ({ id, label, value, onChange }) => {
+const CalendarInput = ({ id, label, value, onChange, mostrarCalendario = false }) => {
   const [abierto, setAbierto] = useState(false);
+
+  const calendarioVisible = mostrarCalendario || abierto;
 
   const obtenerFechaHoy = () => {
     const hoy = new Date();
@@ -46,21 +48,22 @@ const CalendarInput = ({ id, label, value, onChange }) => {
         {value || obtenerFechaHoy()}
       </button>
 
-      {abierto && (
-        <div className="calendar-popover">
-          <DayPicker
-            mode="single"
-            selected={fechaSeleccionada}
-            defaultMonth={fechaSeleccionada}
-            onSelect={(fecha) => {
-              if (!fecha) {
-                return;
-              }
+      {calendarioVisible && (
+        <div className={mostrarCalendario ? "calendar-popover calendar-inline" : "calendar-popover"}>          <DayPicker
+          mode="single"
+          selected={fechaSeleccionada}
+          defaultMonth={fechaSeleccionada}
+          onSelect={(fecha) => {
+            if (!fecha) {
+              return;
+            }
 
-              onChange(formatearFecha(fecha));
-              setAbierto(false);
-            }}
-          />
+            onChange(formatearFecha(fecha));
+            if(!mostrarCalendario) {
+            setAbierto(false);
+            }
+          }}
+        />
         </div>
       )}
     </div>

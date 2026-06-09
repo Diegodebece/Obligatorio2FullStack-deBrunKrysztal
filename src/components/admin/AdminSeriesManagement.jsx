@@ -81,7 +81,6 @@ const AdminSeriesManagement = () => {
             },
           }
         );
-
         dispatch(modificarSerie(response.data.data));
         toast.success("Serie modificada correctamente");
         setSerieEditando(null);

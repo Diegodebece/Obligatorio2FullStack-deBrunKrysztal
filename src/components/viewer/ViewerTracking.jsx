@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -8,8 +8,13 @@ import {
   eliminarSeguimiento,
 } from "../../features/seguimientos/seguimientos.slice";
 
-import ViewerTrackingForm from "./ViewerTrackingForm";
+import ViewerTrackingCard from "./ViewerTrackingCard";
+import ViewerTrackingList from "./ViewerTrackingList";
 import ViewerRatingModal from "./ViewerRatingModal";
+import ViewerTrackingEditModal from "./ViewerTrackingEditModal";
+import ViewerTrackingFilters from "./ViewerTrackingFilters";
+import { obtenerTextoBotonAvance, filtrarYOrdenarSeguimientos } from "./ViewerTrackingHelpers";
+
 
 const ViewerTracking = () => {
   const dispatch = useDispatch();
@@ -21,37 +26,7 @@ const ViewerTracking = () => {
   const [seguimientoParaFinalizar, setSeguimientoParaFinalizar] = useState(null);
   const [ratingFinal, setRatingFinal] = useState(5);
 
-  const obtenerTextoBotonAvance = (seguimiento) => {
-    const serie = seguimiento.serie;
 
-    if (seguimiento.estado === "terminada") {
-      return "Completada";
-    }
-
-    if (
-      seguimiento.estado === "pendiente" ||
-      !seguimiento.temporadaActual ||
-      !seguimiento.episodioActual
-    ) {
-      return "Comencé a verla";
-    }
-
-    const esUltimoEpisodio =
-      seguimiento.episodioActual >= serie.episodiosPorTemporada;
-
-    const esUltimaTemporada =
-      seguimiento.temporadaActual >= serie.cantidadTemporadas;
-
-    if (esUltimoEpisodio && esUltimaTemporada) {
-      return "Terminé la serie";
-    }
-
-    if (esUltimoEpisodio) {
-      return "Siguiente temporada";
-    }
-
-    return "+1 episodio";
-  };
 
   const avanzarSeguimiento = async (seguimiento) => {
     try {
@@ -270,146 +245,36 @@ const ViewerTracking = () => {
     }
   };
 
-  const obtenerTituloSeguimiento = (seguimiento) => {
-    return seguimiento.serie?.titulo || "Serie sin título";
-  };
-
-  const seguimientosFiltrados = seguimientos
-    .filter((seguimiento) => {
-      if (filtroSeguimiento === "todos") {
-        return true;
-      }
-
-      if (filtroSeguimiento === "favoritas") {
-        return seguimiento.esFavorita;
-      }
-
-      return seguimiento.estado === filtroSeguimiento;
-    })
-    .sort((seguimientoA, seguimientoB) =>
-      obtenerTituloSeguimiento(seguimientoA).localeCompare(
-        obtenerTituloSeguimiento(seguimientoB)
-      )
-    );
-
+  const seguimientosFiltrados = filtrarYOrdenarSeguimientos(seguimientos, filtroSeguimiento);
 
   return (
     <section className="panel" id="viewer-seguimientos">
       <h2>Mis seguimientos</h2>
 
-      <div className="filtros">
-        <button type="button" onClick={() => setFiltroSeguimiento("todos")}>
-          Todos
-        </button>
-
-        <button type="button" onClick={() => setFiltroSeguimiento("pendiente")}>
-          Pendientes
-        </button>
-
-        <button type="button" onClick={() => setFiltroSeguimiento("viendo")}>
-          Viendo
-        </button>
-
-        <button type="button" onClick={() => setFiltroSeguimiento("terminada")}>
-          Terminadas
-        </button>
-
-        <button type="button" onClick={() => setFiltroSeguimiento("favoritas")}>
-          Favoritas
-        </button>
-      </div>
+      <ViewerTrackingFilters
+        filtroSeguimiento={filtroSeguimiento}
+        onCambiarFiltro={setFiltroSeguimiento}
+      />
 
       <p>
         Mostrando {seguimientosFiltrados.length} de {seguimientos.length}{" "}
         seguimientos
       </p>
 
-      <div className="tarjetas">
-        {seguimientos.length === 0 && <p>No tenés seguimientos todavía.</p>}
+      <ViewerTrackingList
+        seguimientos={seguimientos}
+        seguimientosFiltrados={seguimientosFiltrados}
+        onAvanzar={avanzarSeguimiento}
+        onEditar={setSeguimientoEditando}
+        onEliminar={borrarSeguimiento}
+        obtenerTextoBotonAvance={obtenerTextoBotonAvance}
+      />
 
-        {seguimientos.length > 0 && seguimientosFiltrados.length === 0 && (
-          <p>No hay seguimientos para este filtro.</p>
-        )}
-
-        {seguimientosFiltrados.map((seguimiento) => {
-          const estaEditando = seguimientoEditando?._id === seguimiento._id;
-          return (
-            <article className="tarjeta" key={seguimiento._id}>
-              <div className="imagen">
-                {seguimiento.serie?.imagen ? (
-                  <img
-                    src={seguimiento.serie.imagen}
-                    alt={obtenerTituloSeguimiento(seguimiento)}
-                  />
-                ) : (
-                  "imagenSerie"
-                )}
-              </div>
-
-              <div>
-                {estaEditando ? (
-                  <ViewerTrackingForm
-                    seguimientoEditando={seguimiento}
-                    onGuardarSeguimiento={guardarEdicionSeguimiento}
-                    onCancelarEdicion={() => setSeguimientoEditando(null)}
-                  />
-                ) : (
-                  <>
-                    <h3>{obtenerTituloSeguimiento(seguimiento)}</h3>
-
-                    <p>Estado: {seguimiento.estado}</p>
-                    <p>Rating: {seguimiento.ratingPersonal || "Sin rating"}</p>
-
-                    <p>
-                      Temporada actual: {seguimiento.temporadaActual || "Sin indicar"}
-                    </p>
-
-                    <p>
-                      Episodio actual: {seguimiento.episodioActual || "Sin indicar"}
-                    </p>
-
-                    <button
-                      type="button"
-                      disabled={seguimiento.estado === "terminada"}
-                      onClick={() => avanzarSeguimiento(seguimiento)}
-                    >
-                      {obtenerTextoBotonAvance(seguimiento)}
-                    </button>
-
-                    <p>
-                      Fecha inicio:{" "}
-                      {seguimiento.fechaInicio
-                        ? seguimiento.fechaInicio.substring(0, 10)
-                        : "Sin indicar"}
-                    </p>
-
-                    <p>
-                      Fecha fin:{" "}
-                      {seguimiento.fechaFin
-                        ? seguimiento.fechaFin.substring(0, 10)
-                        : "Sin indicar"}
-                    </p>
-
-                    <p>{seguimiento.esFavorita ? "Favorita" : "No favorita"}</p>
-
-                    <button type="button" onClick={() => setSeguimientoEditando(seguimiento)}>
-                      Editar
-                    </button>
-
-                    <button
-                      type="button"
-                      className="danger"
-                      onClick={() => borrarSeguimiento(seguimiento._id)}
-                    >
-                      Eliminar
-                    </button>
-                  </>
-                )}
-              </div>
-            </article>
-          );
-        })}
-      </div>
+      <ViewerTrackingEditModal
+        seguimientoEditando={seguimientoEditando}
+        onGuardarSeguimiento={guardarEdicionSeguimiento}
+        onCancelarEdicion={() => setSeguimientoEditando(null)}
+      />
 
       <ViewerRatingModal
         seguimiento={seguimientoParaFinalizar}

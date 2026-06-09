@@ -185,10 +185,10 @@ const ViewerAI = () => {
       </div>
 
       <section className="panel" id="viewer-api">
-        <h2>API externa</h2>
+        <h2>Otros títulos populares de esta semana</h2>
 
         <p>
-          Consultá series populares desde una API externa.
+          Averiguá que es lo que la gente está viendo esta semana.
         </p>
 
         <button

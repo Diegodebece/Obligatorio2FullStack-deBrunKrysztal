@@ -1,11 +1,31 @@
 import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
+import api from "../../api/api";
 
 const ViewerPlan = () => {
   const token = localStorage.getItem("token");
   const usuario = token ? jwtDecode(token) : null;
   const planActual = usuario?.plan || "Plus";
   const planActualFormateado =
-  planActual.charAt(0).toUpperCase() + planActual.slice(1);
+    planActual.charAt(0).toUpperCase() + planActual.slice(1);
+
+  const cambiarAPremium = async () => {
+    try {
+      await api.patch(
+        "/usuarios/me/plan",
+        { plan: "premium" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success("Plan actualizado a premium");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error al cambiar de plan");
+    }
+  };
 
   return (
     <section className="panel" id="viewer-plan">
@@ -64,7 +84,7 @@ const ViewerPlan = () => {
       </table>
 
       {planActual !== "premium" && (
-        <button type="button">
+        <button type="button" onClick={cambiarAPremium}>
           Cambiar a Premium
         </button>
       )}

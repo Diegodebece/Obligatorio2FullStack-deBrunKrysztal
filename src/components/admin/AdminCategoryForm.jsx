@@ -33,14 +33,14 @@ const AdminCategoryForm = ({
     }
   }, [categoriaEditando, reset]);
 
-  const procesarForm = (data) => {
+  const procesarForm = async (data) => {
     const datosCategoria = {
       nombre: data.nombre,
       descripcion: data.descripcion,
       activa: data.activa === true || data.activa === "true",
     };
 
-    onGuardarCategoria(datosCategoria);
+    await onGuardarCategoria(datosCategoria);
 
   };
 
@@ -50,7 +50,7 @@ const AdminCategoryForm = ({
       <input
         id="categoria-nombre"
         type="text"
-        placeholder="nombreCategoria"
+        placeholder="Nombre de la categoría"
         {...register("nombre")}
       />
 
@@ -62,7 +62,7 @@ const AdminCategoryForm = ({
       <input
         id="categoria-descripcion"
         type="text"
-        placeholder="descripcionCategoria"
+        placeholder="Descripción de la categoría"
         {...register("descripcion")}
       />
 
@@ -72,17 +72,24 @@ const AdminCategoryForm = ({
 
       <label htmlFor="categoria-activa">Estado</label>
       <select id="categoria-activa" {...register("activa")}>
-        <option value="true">activa</option>
-        <option value="false">inactiva</option>
+        <option value="true">Activa</option>
+        <option value="false">Inactiva</option>
       </select>
 
       {errors.activa && (
         <span className="error">{errors.activa.message}</span>
       )}
-      
+
 
       <button type="submit" disabled={isSubmitting || !isDirty || !isValid}>
-        {categoriaEditando ? "Modificar categoría" : "Guardar categoría"}
+        {isSubmitting ? (
+          <>
+            <span className="spinner"></span>
+            Guardando . . .
+          </>
+        ) : (
+          categoriaEditando ? "Modificar categoría" : "Guardar categoría"
+        )}
       </button>
 
       {categoriaEditando && (

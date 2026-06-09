@@ -11,7 +11,8 @@ export const crearCategoriaSchema = Joi.object({
 
     descripcion: Joi.string().max(255).optional().messages({
         "string.base": "La descripción debe ser un texto",
-        "string.max": "La descripción no puede tener más de {#limit} caracteres"
+        "string.max": "La descripción no puede tener más de {#limit} caracteres",
+        "string.empty": "La descripción no puede estar vacía"
     }),
 
     activa: Joi.boolean().optional().messages({
