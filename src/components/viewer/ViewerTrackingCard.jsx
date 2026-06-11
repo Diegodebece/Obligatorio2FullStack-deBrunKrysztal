@@ -12,6 +12,9 @@ const ViewerTrackingCard = ({
     return (
         <article className="tarjeta">
             <div className="imagen">
+                {seguimiento.esFavorita && (
+                    <span className="favorita-badge">🩷</span>
+                )}
                 {seguimiento.serie?.imagen ? (
                     <img
                         src={seguimiento.serie.imagen}

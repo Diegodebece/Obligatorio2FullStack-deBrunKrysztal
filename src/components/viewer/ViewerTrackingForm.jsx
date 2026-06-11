@@ -134,30 +134,6 @@ const ViewerTrackingForm = ({
             onChange={setFechaFin}
             mostrarCalendario={false}
           />
-
-          <label htmlFor="ratingPersonal">Rating personal</label>
-          <input
-            id="ratingPersonal"
-            type="number"
-            min="1"
-            max="10"
-            placeholder="Rating personal"
-            {...register("ratingPersonal", {
-              valueAsNumber: true,
-              min: {
-                value: 1,
-                message: "El rating mínimo es 1",
-              },
-              max: {
-                value: 10,
-                message: "El rating máximo es 10",
-              },
-            })}
-          />
-
-          {errors.ratingPersonal && (
-            <span className="error">{errors.ratingPersonal.message}</span>
-          )}
         </>
       )}
 

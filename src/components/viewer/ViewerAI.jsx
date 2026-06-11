@@ -30,7 +30,6 @@ const ViewerAI = () => {
       toast.success("Recomendaciones generadas correctamente");
     } catch (error) {
       toast.error(
-        error.response?.data?.message ||
         error.response?.data?.mensaje ||
         "Error al generar recomendaciones"
       );

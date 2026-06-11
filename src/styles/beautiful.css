@@ -72,6 +72,7 @@
 
 html {
   scroll-behavior: smooth;
+  min-height: 100%;
 }
 
 body {
@@ -81,6 +82,11 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
 }
 
 /* ==========================================
@@ -913,6 +919,7 @@ td select {
   justify-content: center;
   border-bottom: 1px solid var(--border-color);
   flex-shrink: 0;
+  position: relative;
 }
 
 .tarjeta .imagen img {
@@ -935,6 +942,25 @@ td select {
   color: var(--gray-400);
   font-weight: 600;
   font-size: 0.95rem;
+}
+
+#viewer-seguimientos .favorita-badge {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  z-index: 2;
+  width: auto;
+  height: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #ff5a52;
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 800;
+  filter: drop-shadow(0 2px 4px rgba(1, 2, 3, 0.9));
 }
 
 /* Contenido de tarjeta */
@@ -1654,11 +1680,16 @@ table {
 }
 
 .panel:hover,
-.tarjeta:hover,
 .resumen-card:hover {
   border-color: var(--primary);
   box-shadow: 0 0 0 1px rgba(255, 122, 24, 0.16), 0 0 32px rgba(255, 122, 24, 0.08);
   transform: none;
+}
+
+.tarjeta:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px rgba(255, 122, 24, 0.16), 0 0 32px rgba(255, 122, 24, 0.08);
+  transform: translateY(-2px) scale(1.05);
 }
 
 .admin-form h3::before {

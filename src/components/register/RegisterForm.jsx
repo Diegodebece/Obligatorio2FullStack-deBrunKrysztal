@@ -13,7 +13,7 @@ const RegisterForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { register, handleSubmit, formState: { errors, isSubmitting, isDirty, isValid },} = useForm({
+  const { register, handleSubmit, formState: { errors, isSubmitting, isDirty, isValid }, } = useForm({
     resolver: joiResolver(registrarUsuarioSchema),
     mode: "onChange",
   });
@@ -29,6 +29,11 @@ const RegisterForm = () => {
 
       const response = await api.post("/auth/registro", datosRegistro);
       const token = response.data.token;
+
+      if (!token) {
+        throw new Error("No se recibió token del servidor");
+      }
+
       dispatch(guardarToken(token));
       const usuario = jwtDecode(token);
       toast.success("Usuario registrado correctamente");

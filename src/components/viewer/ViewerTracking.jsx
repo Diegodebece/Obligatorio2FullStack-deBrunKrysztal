@@ -25,8 +25,14 @@ const ViewerTracking = () => {
   const [filtroSeguimiento, setFiltroSeguimiento] = useState("todos");
   const [seguimientoParaFinalizar, setSeguimientoParaFinalizar] = useState(null);
   const [ratingFinal, setRatingFinal] = useState(5);
+  const [datosEdicionParaFinalizar, setDatosEdicionParaFinalizar] = useState(null);
 
+  const obtenerFechaHoy = () => {
+    const hoy = new Date();
+    const fechaLocal = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000);
 
+    return fechaLocal.toISOString().slice(0, 10);
+  };
 
   const avanzarSeguimiento = async (seguimiento) => {
     try {
@@ -145,6 +151,7 @@ const ViewerTracking = () => {
 
       toast.success("Serie marcada como terminada");
       setSeguimientoParaFinalizar(null);
+      setDatosEdicionParaFinalizar(null);
     } catch (error) {
       toast.error(error.response?.data?.message || "Error al finalizar serie");
     }
@@ -176,18 +183,24 @@ const ViewerTracking = () => {
       }
 
       if (data.estado === "terminada") {
-        datosSeguimiento.temporadaActual =
-          data.temporadaActual === "" ? null : Number(data.temporadaActual);
+        const serie = seguimientoEditando.serie;
 
-        datosSeguimiento.episodioActual =
-          data.episodioActual === "" ? null : Number(data.episodioActual);
+        setDatosEdicionParaFinalizar({
+          serie: serie._id || serie,
+          estado: "terminada",
+          esFavorita: data.esFavorita,
+          ratingPersonal: null,
+          temporadaActual: serie.cantidadTemporadas,
+          episodioActual: serie.episodiosPorTemporada,
+          fechaInicio: data.fechaInicio || seguimientoEditando.fechaInicio || new Date().toISOString(),
+          fechaFin: new Date().toISOString(),
+        });
 
-        datosSeguimiento.fechaInicio = data.fechaInicio || null;
-        datosSeguimiento.fechaFin = data.fechaFin || null;
+        setRatingFinal(seguimientoEditando.ratingPersonal || 5);
+        setSeguimientoParaFinalizar(seguimientoEditando);
+        setSeguimientoEditando(null);
 
-        datosSeguimiento.ratingPersonal = Number.isNaN(data.ratingPersonal)
-          ? null
-          : data.ratingPersonal;
+        return;
       }
 
       const response = await api.patch(

@@ -2,16 +2,21 @@ import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 import api from "../../api/api";
 
+import { useDispatch, useSelector } from "react-redux";
+import { guardarToken } from "../../features/auth/auth.slice";
+
 const ViewerPlan = () => {
-  const token = localStorage.getItem("token");
+  const token = useSelector((state) => state.auth.token);
   const usuario = token ? jwtDecode(token) : null;
   const planActual = usuario?.plan || "Plus";
   const planActualFormateado =
     planActual.charAt(0).toUpperCase() + planActual.slice(1);
 
+  const dispatch = useDispatch();
+
   const cambiarAPremium = async () => {
     try {
-      await api.patch(
+      const response = await api.patch(
         "/usuarios/me/plan",
         { plan: "premium" },
         {
@@ -20,6 +25,8 @@ const ViewerPlan = () => {
           },
         }
       );
+
+      dispatch(guardarToken(response.data.token));
 
       toast.success("Plan actualizado a premium");
     } catch (error) {
@@ -59,8 +66,8 @@ const ViewerPlan = () => {
 
           <tr>
             <td>🤖 Recomendaciones IA</td>
-            <td>⚠️ Limitadas</td>
-            <td>✨ Ilimitadas</td>
+            <td>⚠️ Genéricas</td>
+            <td>✨ Personalizadas</td>
           </tr>
 
           <tr>

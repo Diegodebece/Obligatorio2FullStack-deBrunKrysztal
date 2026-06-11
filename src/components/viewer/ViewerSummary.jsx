@@ -65,20 +65,26 @@ const ViewerSummary = () => {
           </button>
         )}
 
-        {planActual === "premium" && <p>Ya tenés plan premium</p>}
       </article>
 
       <article className="resumen-card">
         <h3>Uso del plan</h3>
-        <p>
-          {porcentajeUsoPlan}% ({totalSeguimientos} de {limiteSeguimientos} seguimientos)
-        </p>
-        <div className="barra-progreso">
-          <div
-            className="barra-progreso-rellena"
-            style={{ width: `${porcentajeUsoPlan}%` }}
-          />
-        </div>
+        {planActual === "premium" ? (
+    <p>{totalSeguimientos} seguimientos activos</p>
+  ) : (
+    <>
+      <p>
+        {porcentajeUsoPlan}% ({totalSeguimientos} de {limiteSeguimientos} seguimientos)
+      </p>
+
+      <div className="barra-progreso">
+        <div
+          className="barra-progreso-rellena"
+          style={{ width: `${porcentajeUsoPlan}%` }}
+        />
+      </div>
+    </>
+  )}
       </article>
 
       <article className="resumen-card">

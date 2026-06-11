@@ -9,6 +9,13 @@ import { listarSeries } from "../features/series/series.slice";
 import { listarCategorias } from "../features/categorias/categorias.slice";
 import { listarSeguimientos } from "../features/seguimientos/seguimientos.slice";
 
+const esperar = (milisegundos) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, milisegundos);
+  });
+};
+
+
 const ViewerPage = () => {
   const dispatch = useDispatch();
 

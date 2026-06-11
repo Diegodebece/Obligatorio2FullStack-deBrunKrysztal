@@ -9,6 +9,10 @@ import LogoutButton from "../logout/LogoutButton";
 const ViewerAside = () => {
   const token = useSelector((state) => state.auth.token);
 
+  if (!token) {
+    return null;
+  }
+
   const [usuario, setUsuario] = useState(null);
 
   const datosToken = jwtDecode(token);
