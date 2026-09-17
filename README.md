@@ -1,16 +1,65 @@
-# React + Vite
+# Series Tracker Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend desarrollado para una aplicación web full-stack que permite a los usuarios descubrir, seguir y gestionar series de TV.
 
-Currently, two official plugins are available:
+La aplicación consume una API REST externa para manejar autenticación, usuarios, series, categorías, seguimientos, estadísticas y recomendaciones. Incluye vistas diferenciadas para usuarios viewer y administradores.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Funcionalidades
 
-## React Compiler
+- Registro e inicio de sesión de usuarios
+- Autenticación mediante JWT
+- Rutas protegidas según sesión activa
+- Panel de usuario viewer
+- Catálogo de series
+- Seguimiento de series por usuario
+- Gestión de progreso de visualización
+- Calificaciones de series
+- Estadísticas personales
+- Recomendaciones y tendencias
+- Panel de administración
+- Gestión de series
+- Gestión de categorías
+- Gestión de usuarios
+- Visualización de estadísticas administrativas
+- Validación de formularios
+- Notificaciones visuales para acciones y errores
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tecnologías
 
-## Expanding the ESLint configuration
+- React
+- Vite
+- Redux Toolkit
+- React Redux
+- React Router
+- Axios
+- React Hook Form
+- Joi
+- JWT Decode
+- React Toastify
+- Chart.js
+- React Chart.js 2
+- React Modal
+- React DayPicker
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Arquitectura
+
+El proyecto sigue una estructura modular, separando páginas, componentes, estado global, validaciones y comunicación con la API.
+
+```text
+src/
+├── api/
+├── app/
+│   └── guards/
+├── components/
+│   ├── admin/
+│   ├── common/
+│   ├── login/
+│   ├── logout/
+│   ├── register/
+│   └── viewer/
+├── features/
+├── pages/
+├── store/
+├── styles/
+├── validators/
+└── ...
